@@ -4,7 +4,14 @@ import java.nio.file.Path
 import kotlin.io.path.readBytes
 
 // Base Route class and its subclasses for different route types
-sealed class Route(val path: String, val children: List<Route> = mutableListOf()) {
+abstract class Route(val path: String, val children: List<Route> = mutableListOf()) {
+
+    init {
+        if (path.lastIndexOf("/") > 0) {
+            throw RuntimeException("Route paths should all be relative and therefore shouldn't contain / (unless it's the first character)")
+        }
+    }
+
     abstract fun response(session: NanoHTTPD.IHTTPSession) :Response
 
     open val extension :String?
@@ -16,19 +23,20 @@ sealed class Route(val path: String, val children: List<Route> = mutableListOf()
             return MimeTypes[ext]
         }
 
-}
-
-class Directory(path: String, children: List<Route>) : Route(path, children) {
-    override fun response(session: NanoHTTPD.IHTTPSession) :Response {
-        TODO("Not yet implemented")
+    fun addChildren(vararg child: Route) : Route {
+        (this.children as MutableList<Route>).addAll(child)
+        return this
     }
+
 }
 
 class StaticFile(path: String, val resourcePath :String) : Route(path) {
-    override fun response(session: NanoHTTPD.IHTTPSession): Response {
+    override fun response(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
+        val mimeType = mimeType ?: return notFound("Can't provide a response for $path as there is no supported  mime type")
+
         val bytes = Path.of(resourcePath)
             .readBytes()
-        return data(bytes, mimeType!!)
+        return data(bytes, mimeType)
     }
 
     override val extension: String?
@@ -39,3 +47,8 @@ class StaticFile(path: String, val resourcePath :String) : Route(path) {
         }
 }
 
+class Directory(path: String, children: List<Route> = mutableListOf()) : Route(path, children) {
+    override fun response(session: NanoHTTPD.IHTTPSession) : NanoHTTPD.Response {
+        TODO("Directories don't support a response")
+    }
+}

@@ -1,11 +1,14 @@
 fun main(args: Array<String>) {
 
-    val routes = Directory("/",
-        listOf(
-            StaticFile("", "C:\\inetpub\\wwwroot\\iisstart.png")
+    //Base path
+    val baseDir = "C:\\Users\\Ian\\Downloads\\html-css-template-pfnp\\html-css-template-pfnp"
+
+    var routes = Directory("/")
+        .addChildren(
+            StaticFile("", "$baseDir\\index.html")
         )
 
-    )
+    routes = Router.createRouteTreeFromDirectory(baseDir)
 
     val diContext = DIContext()
         .apply {
