@@ -1,7 +1,7 @@
-import routes.Directory
-import routes.Route
-import routes.StaticFile
-import routes.ZipFileRoute
+package routes
+
+import TreeNode
+import buildZipTree
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths

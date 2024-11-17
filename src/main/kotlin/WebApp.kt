@@ -1,5 +1,5 @@
 import fi.iki.elonen.NanoHTTPD
-import routes.Route
+import routes.Router
 
 class WebApp(val router: Router) : NanoHTTPD(81) {
 
