@@ -32,7 +32,7 @@ class Router(val rootRoute :Route) {
                 val routePath = if (relativePath.isEmpty()) "/" else relativePath
 
                 return if (Files.isDirectory(currentPath)) {
-                    val children = Files.list(currentPath)
+                    var children = Files.list(currentPath)
                         .filter { Files.isReadable(it) } // Exclude unreadable files
                         .sorted() // Sort entries alphabetically
                         .map { buildRoutesFromPath(it, currentPath) } // Recursively process children
@@ -45,7 +45,8 @@ class Router(val rootRoute :Route) {
                         val defaultFilePath = currentPath.resolve(defaultDocument)
                         if (Files.exists(defaultFilePath)) {
                             val defaultFileRoute = StaticFile(routePath, defaultFilePath.toAbsolutePath().toString())
-                            return Directory(routePath, children + defaultFileRoute)
+
+                            children = children + defaultFileRoute
                         }
                     }
 
