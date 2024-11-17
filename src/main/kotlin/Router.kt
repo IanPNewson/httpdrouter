@@ -20,7 +20,7 @@ class Router(val rootRoute :Route) {
     }
 
     companion object {
-        fun createRouteTreeFromDirectory(directoryPath: String): Route {
+        fun createRouteTreeFromDirectory(directoryPath: String, defaultDocument: String? = "index.html"): Route {
             val rootPath = Paths.get(directoryPath)
 
             if (!Files.isDirectory(rootPath)) {
@@ -38,7 +38,18 @@ class Router(val rootRoute :Route) {
                         .map { buildRoutesFromPath(it, currentPath) } // Recursively process children
                         .toList()
 
-                    Directory(routePath, children)
+                    val directoryRoute = Directory(routePath, children)
+
+                    // If a default document is specified and exists, add it to the directory
+                    if (defaultDocument != null) {
+                        val defaultFilePath = currentPath.resolve(defaultDocument)
+                        if (Files.exists(defaultFilePath)) {
+                            val defaultFileRoute = StaticFile(routePath, defaultFilePath.toAbsolutePath().toString())
+                            return Directory(routePath, children + defaultFileRoute)
+                        }
+                    }
+
+                    directoryRoute
                 } else {
                     StaticFile(routePath, currentPath.toAbsolutePath().toString())
                 }
