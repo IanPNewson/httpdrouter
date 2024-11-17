@@ -38,17 +38,16 @@ class Router(val rootRoute :Route) {
                         .map { buildRoutesFromPath(it, currentPath) } // Recursively process children
                         .toList()
 
-                    val directoryRoute = Directory(routePath, children)
-
                     // If a default document is specified and exists, add it to the directory
                     if (defaultDocument != null) {
                         val defaultFilePath = currentPath.resolve(defaultDocument)
                         if (Files.exists(defaultFilePath)) {
-                            val defaultFileRoute = StaticFile(routePath, defaultFilePath.toAbsolutePath().toString())
-
+                            val defaultFileRoute = StaticFile("", defaultFilePath.toAbsolutePath().toString())
                             children = children + defaultFileRoute
                         }
                     }
+
+                    val directoryRoute = Directory(routePath, children)
 
                     directoryRoute
                 } else {
