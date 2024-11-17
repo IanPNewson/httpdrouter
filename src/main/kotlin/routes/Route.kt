@@ -1,5 +1,6 @@
 package routes
 
+import DefaultDocument
 import MimeTypes
 import extension
 import fi.iki.elonen.NanoHTTPD
@@ -24,7 +25,7 @@ abstract class Route(val path: String, val children: List<Route> = mutableListOf
             return MimeTypes[ext]
         }
 
-    fun addChildren(vararg child: Route): Route {
+    open fun addChildren(vararg child: Route): Route {
         (this.children as MutableList<Route>).addAll(child)
         return this
     }
@@ -42,7 +43,12 @@ abstract class Route(val path: String, val children: List<Route> = mutableListOf
         }
 
         fun describeRouteTree(route: Route, indent: String, builder: StringBuilder = java.lang.StringBuilder()) {
-            builder.appendLine("$indent${route::class.simpleName}: ${route.path}")
+
+            if (route is DefaultDocument) {
+                builder.appendLine("$indent${route::class.simpleName}: ${route.route.path}")
+            } else {
+                builder.appendLine("$indent${route::class.simpleName}: ${route.path}")
+            }
 
             route.children.forEach { child ->
                 describeRouteTree(child, "$indent  ", builder)

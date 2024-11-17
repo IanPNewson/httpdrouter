@@ -1,9 +1,7 @@
 import fi.iki.elonen.NanoHTTPD
 import routes.Route
 
-class WebApp(routes: Route) : NanoHTTPD(81) {
-
-    private val router = Router(routes)
+class WebApp(val router: Router) : NanoHTTPD(81) {
 
     override fun serve(_session: IHTTPSession?): Response {
 

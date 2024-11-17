@@ -4,25 +4,24 @@ import java.util.zip.ZipFile
 
 fun main(args: Array<String>) {
 
-    //Base path
-    var baseDir = "C:\\Users\\Ian\\Downloads\\html-css-template-pfnp\\html-css-template-pfnp"
-    baseDir = "C:\\Users\\Ian\\Downloads\\templated-industrious\\industrious"
+    val routes = Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\templated-hielo\\hielo.zip")
 
-    //val routes = Router.createRouteTreeFromDirectory(baseDir)
-
-    val routes = Directory("")
+        /*Directory("")
         .addChildren(
             Directory("hielo")
                 .addChildren(Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\templated-hielo\\hielo.zip")),
             Directory("industrious")
                 .addChildren(Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\htmltemplate.zip"))
-        )
+        )*/
+
+    (routes as Directory).addDefaultDocuments()
 
     println(routes.toString())
 
     val diContext = DIContext()
         .apply {
-            add{ -> WebApp(routes)}
+            add{ -> Router(routes)}
+            add{ router :Router -> WebApp(router)}
         }
 
     val app = diContext.get<WebApp>()
