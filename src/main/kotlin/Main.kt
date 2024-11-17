@@ -1,14 +1,24 @@
+import routes.Directory
+import java.io.File
+import java.util.zip.ZipFile
+
 fun main(args: Array<String>) {
 
     //Base path
-    val baseDir = "C:\\Users\\Ian\\Downloads\\html-css-template-pfnp\\html-css-template-pfnp"
+    var baseDir = "C:\\Users\\Ian\\Downloads\\html-css-template-pfnp\\html-css-template-pfnp"
+    baseDir = "C:\\Users\\Ian\\Downloads\\templated-industrious\\industrious"
 
-    var routes = Directory("/")
+    //val routes = Router.createRouteTreeFromDirectory(baseDir)
+
+    val routes = Directory("")
         .addChildren(
-            StaticFile("", "$baseDir\\index.html")
+            Directory("hielo")
+                .addChildren(Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\templated-hielo\\hielo.zip")),
+            Directory("industrious")
+                .addChildren(Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\htmltemplate.zip"))
         )
 
-    routes = Router.createRouteTreeFromDirectory(baseDir)
+    println(routes.toString())
 
     val diContext = DIContext()
         .apply {
@@ -21,15 +31,13 @@ fun main(args: Array<String>) {
         app.start()
     }.start()
 
-
-
     println("Running")
     System.console().readLine()
 }
 
 /*
 // Action class that supports automatic parameter binding with Enum support
-class Action(path: String, private val handler: KFunction<Response>) : Route(path) {
+class Action(path: String, private val handler: KFunction<Response>) : routes.Route(path) {
     suspend fun invokeWithParameters(parms: Map<String, String>): Response {
         val args = mutableMapOf<kotlin.reflect.KParameter, Any?>()
 
@@ -69,48 +77,48 @@ class Action(path: String, private val handler: KFunction<Response>) : Route(pat
 
 // Router that holds the root directory and finds routes
 object Router {
-    private lateinit var rootRoute: Directory
+    private lateinit var rootRoute: routes.Directory
 
-    fun initialize(root: Directory) {
+    fun initialize(root: routes.Directory) {
         rootRoute = root
     }
 
-    fun findRoute(path: String): Route? {
+    fun findRoute(path: String): routes.Route? {
         val pathParts = path.trim('/').split('/')
         return findRouteRecursively(rootRoute.children, pathParts)
     }
 
-    private fun findRouteRecursively(routes: List<Route>, pathParts: List<String>): Route? {
+    private fun findRouteRecursively(routes: List<routes.Route>, pathParts: List<String>): routes.Route? {
         if (pathParts.isEmpty()) return null
         val currentPart = pathParts.first()
 
         val matchedRoute = routes.firstOrNull { it.path == currentPart }
         return when (matchedRoute) {
-            is Directory -> findRouteRecursively(matchedRoute.children, pathParts.drop(1))
-            is StaticFile, is Action -> if (pathParts.size == 1) matchedRoute else null
+            is routes.Directory -> findRouteRecursively(matchedRoute.children, pathParts.drop(1))
+            is routes.StaticFile, is Action -> if (pathParts.size == 1) matchedRoute else null
             else -> null
         }
     }
 }
 
 // Function to serve different route types with parameter binding support for Action
-suspend fun serveRoute(route: Route, parms: Map<String, String>): Response {
+suspend fun serveRoute(route: routes.Route, parms: Map<String, String>): Response {
     return when (route) {
-        is StaticFile -> staticFileData(route.resourceId)
+        is routes.StaticFile -> staticFileData(route.resourceId)
         is Action -> route.invokeWithParameters(parms)
         else -> Response(Status.NOT_FOUND, MIME_PLAINTEXT, "Not Found")
     }
 }
 
-// Route setup with an Action using a function with Enum parameters
-fun setupRoutes(): Directory {
-    return Directory("/", listOf(
-        StaticFile("", R.raw.home),  // The root URL serving the home page
-        Directory("images", listOf(
-            StaticFile("back.png", R.drawable.back),
-            StaticFile("home.png", R.drawable.home)
+// routes.Route setup with an Action using a function with Enum parameters
+fun setupRoutes(): routes.Directory {
+    return routes.Directory("/", listOf(
+        routes.StaticFile("", R.raw.home),  // The root URL serving the home page
+        routes.Directory("images", listOf(
+            routes.StaticFile("back.png", R.drawable.back),
+            routes.StaticFile("home.png", R.drawable.home)
         )),
-        StaticFile("login.html", R.raw.login),
+        routes.StaticFile("login.html", R.raw.login),
         Action("handleClick", ::handleClick),  // Function with no parameters
         Action("login", ::loginHandler)  // Function with parameters including Enum
     ))

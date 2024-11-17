@@ -38,7 +38,7 @@ fun data(bytes: ByteArray, mimeType: String): NanoHTTPD.Response {
 //    return data(bytes, mimeType)
 //}
 
-//fun staticFileData(file :StaticFile) : NanoHTTPD.Response {
+//fun staticFileData(file :routes.StaticFile) : NanoHTTPD.Response {
 //    return resourceData(file.resourceId, file.mimeType)
 //}
 

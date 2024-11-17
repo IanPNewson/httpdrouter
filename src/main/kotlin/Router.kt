@@ -1,8 +1,13 @@
+import routes.Directory
+import routes.Route
+import routes.StaticFile
+import routes.ZipFileRoute
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.zip.ZipFile
 
-class Router(val rootRoute :Route) {
+class Router(val rootRoute : Route) {
 
     fun findRoute(path: String?): Route? {
         if (path == null) return null
@@ -56,6 +61,37 @@ class Router(val rootRoute :Route) {
             }
 
             return buildRoutesFromPath(rootPath)
+        }
+        fun createRouteTreeFromZip(zipFilePath: String, topLevelFolder: String? = null): Route {
+            val zipPath = Path.of(zipFilePath)
+
+            if (!zipPath.toFile().exists() || !zipPath.toFile().isFile) {
+                throw IllegalArgumentException("Provided path is not a valid ZIP file: $zipFilePath")
+            }
+
+            ZipFile(zipPath.toFile()).use { zip ->
+                // Build the TreeNode structure
+                val rootTreeNode = zip.buildZipTree()
+
+                // Find the starting node based on the top-level folder
+                val startingNode = if (!topLevelFolder.isNullOrEmpty()) {
+                    rootTreeNode.children.find { it.name == topLevelFolder && it.isDirectory }
+                        ?: throw IllegalArgumentException("Top-level folder '$topLevelFolder' not found in ZIP file.")
+                } else {
+                    rootTreeNode
+                }
+
+                // Recursively build the Route tree from the TreeNode structure
+                fun buildRouteTree(node: TreeNode): Route {
+                    return if (node.isDirectory) {
+                        Directory(node.name, node.children.map { buildRouteTree(it) })
+                    } else {
+                        ZipFileRoute(node.name, zipPath, node.zipEntry ?: throw IllegalStateException("Missing ZipEntry for file node: ${node.name}"))
+                    }
+                }
+
+                return buildRouteTree(startingNode)
+            }
         }
 
     }
