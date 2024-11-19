@@ -1,10 +1,14 @@
 import routes.Action
 import routes.Directory
 import routes.Router
+import routes.authentication.Allow
+import routes.authentication.AllowIf
+import routes.authentication.Deny
+import routes.authentication.DenyIf
 
 fun main(args: Array<String>) {
 
-    var routes = Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\templated-hielo\\hielo.zip")
+    var zipRoutes = Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\templated-hielo\\hielo.zip")
         as Directory
 
         /*Directory("")
@@ -15,21 +19,19 @@ fun main(args: Array<String>) {
                 .addChildren(routes.Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\htmltemplate.zip"))
         )*/
 
-    routes.addDefaultDocuments()
+    zipRoutes.addDefaultDocuments()
 
-    val actions = Directory.root()
-        .addChildren(
+    val actions = Directory.root(
             Directory("actions",
-                    Action("time") {
-                        session -> text("${System.currentTimeMillis()}")
+                    authenticationHandler = DenyIf { _ -> System.currentTimeMillis()%2 == 0L},
+                    Action("time", authenticationHandler = AllowIf { _ -> System.currentTimeMillis()%3 == 0L}) {
+                        _ -> text("${System.currentTimeMillis()}")
                     }
-                )
+                ),
+            authHandler = Allow()
         )
 
-    routes = routes.merge(actions) as Directory
-
-//    routes.merge(Directory.root()
-//        .addChildren(Action("test", null)))
+    val routes = zipRoutes.merge(actions) as Directory
 
     println(routes.toString())
 

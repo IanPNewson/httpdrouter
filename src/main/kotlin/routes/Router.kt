@@ -25,22 +25,28 @@ class Router(private val rootRoute : Route) {
     }
 
     fun findRoutePath(target: Route): RoutePath {
-        fun traverse(current: Route, currentPath: MutableList<Pair<Route, Int>>): RoutePath {
-            if (current == target) return RoutePath(target, rootRoute, currentPath.toList())
+        fun traverse(current: Route, currentPath: MutableList<RoutePathStep>): RoutePath? {
+            if (current == target) {
+                currentPath.add(RoutePathStep(current, currentPath.last().route.children.indexOf(current)))
+                return RoutePath(target, rootRoute, currentPath.toList())
+            }
 
             // Recursively search in children if current is a Directory
             if (current is Directory) {
                 current.children.forEachIndexed { index, child ->
-                    currentPath.add(Pair(current, index))
+                    currentPath.add(RoutePathStep(current, index))
                     val result = traverse(child, currentPath)
                     if (result != null) return result
                     currentPath.removeAt(currentPath.size - 1)
                 }
             }
-            throw RuntimeException("Couldn't find route path")
+            return null
         }
 
-        return traverse(rootRoute, mutableListOf())
+        val path = traverse(rootRoute, mutableListOf())
+
+        return path ?:
+            throw RuntimeException("Couldn't find path for route '${target::class.simpleName} ${target.path}'")
     }
 
     companion object {
@@ -120,4 +126,9 @@ class Router(private val rootRoute : Route) {
 data class RoutePath(
     val route :Route,
     val rootRoute :Route,
-    val path :List<Pair<Route,Int>>)
+    val path :List<RoutePathStep>)
+
+data class RoutePathStep(
+    val route :Route,
+    val index :Int
+)

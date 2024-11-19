@@ -4,15 +4,20 @@ import DefaultDocument
 import MimeTypes
 import extension
 import fi.iki.elonen.NanoHTTPD
+import routes.authentication.Authenticator
 
 // Base Route class and its subclasses for different route types
-abstract class Route(val path: String, val children: List<Route> = mutableListOf()) {
+abstract class Route(val path: String,
+                     val children: List<Route> = mutableListOf(),
+                     val authenticationHandler :Authenticator? = null) {
 
     init {
         if (path.lastIndexOf("/") > 0) {
             throw RuntimeException("Route paths should all be relative and therefore shouldn't contain / (unless it's the first character)")
         }
     }
+
+
 
     abstract fun response(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response
 
