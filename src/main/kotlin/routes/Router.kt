@@ -7,7 +7,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 
-class Router(val rootRoute : Route) {
+class Router(private val rootRoute : Route) {
 
     fun findRoute(path: String?): Route? {
         if (path == null) return null
@@ -22,6 +22,25 @@ class Router(val rootRoute : Route) {
         val remainingParts = pathParts.drop(1)
         val childRoute = findRouteRecursively(matchedRoute.children, remainingParts)
         return childRoute ?: matchedRoute
+    }
+
+    fun findRoutePath(target: Route): RoutePath {
+        fun traverse(current: Route, currentPath: MutableList<Pair<Route, Int>>): RoutePath {
+            if (current == target) return RoutePath(target, rootRoute, currentPath.toList())
+
+            // Recursively search in children if current is a Directory
+            if (current is Directory) {
+                current.children.forEachIndexed { index, child ->
+                    currentPath.add(Pair(current, index))
+                    val result = traverse(child, currentPath)
+                    if (result != null) return result
+                    currentPath.removeAt(currentPath.size - 1)
+                }
+            }
+            throw RuntimeException("Couldn't find route path")
+        }
+
+        return traverse(rootRoute, mutableListOf())
     }
 
     companion object {
@@ -97,3 +116,8 @@ class Router(val rootRoute : Route) {
     }
 
 }
+
+data class RoutePath(
+    val route :Route,
+    val rootRoute :Route,
+    val path :List<Pair<Route,Int>>)

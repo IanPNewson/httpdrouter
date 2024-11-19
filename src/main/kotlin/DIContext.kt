@@ -12,6 +12,16 @@ class DIContext {
 
     private fun producers() :List<Producer> = producers
 
+    //region one shot
+
+    inline fun <reified T, reified U> get(producer :(U) -> T) : T {
+        val arg = this.get<U>()
+        val instance = producer(arg)
+        return instance
+    }
+
+    //endregion
+
     inline fun <reified T> get() : T {
         val clazz = T::class.java
         return get(clazz) as T

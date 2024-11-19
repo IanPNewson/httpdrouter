@@ -1,9 +1,11 @@
+import routes.Action
 import routes.Directory
 import routes.Router
 
 fun main(args: Array<String>) {
 
-    val routes = Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\templated-hielo\\hielo.zip")
+    var routes = Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\templated-hielo\\hielo.zip")
+        as Directory
 
         /*Directory("")
         .addChildren(
@@ -13,9 +15,25 @@ fun main(args: Array<String>) {
                 .addChildren(routes.Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\htmltemplate.zip"))
         )*/
 
-    (routes as Directory).addDefaultDocuments()
+    routes.addDefaultDocuments()
+
+    val actions = Directory.root()
+        .addChildren(
+            Directory("actions",
+                    Action("time") {
+                        session -> text("${System.currentTimeMillis()}")
+                    }
+                )
+        )
+
+    routes = routes.merge(actions) as Directory
+
+//    routes.merge(Directory.root()
+//        .addChildren(Action("test", null)))
 
     println(routes.toString())
+
+
 
     val diContext = DIContext()
         .apply {
@@ -34,45 +52,12 @@ fun main(args: Array<String>) {
     System.console().readLine()
 }
 
+
+class Test(val ting :Thing)
+
+class Thing
+
 /*
-// Action class that supports automatic parameter binding with Enum support
-class Action(path: String, private val handler: KFunction<Response>) : routes.Route(path) {
-    suspend fun invokeWithParameters(parms: Map<String, String>): Response {
-        val args = mutableMapOf<kotlin.reflect.KParameter, Any?>()
-
-        // Bind parameters based on the function's signature
-        handler.valueParameters.forEach { parameter ->
-            val name = parameter.name
-            val type = parameter.type.jvmErasure
-
-            // Find matching parameter in the query string
-            val value = parms[name]
-
-            // Convert the parameter if possible
-            args[parameter] = when {
-                value == null -> null // Use default or null if not found
-                type == String::class -> value
-                type == Int::class -> value.toIntOrNull()
-                type == Boolean::class -> value.toBoolean()
-                type.java.isEnum -> enumValueOrNull(type, value) // Enum support
-                else -> null // Unsupported type
-            }
-        }
-
-        return if (handler.isSuspend) {
-            handler.callSuspendBy(args)
-        } else {
-            handler.callBy(args)
-        }
-    }
-
-    // Helper function to convert a string to an Enum value
-    private fun <T : Enum<*>> enumValueOrNull(enumClass: Class<T>, value: String?): T? {
-        return value?.let {
-            enumClass.enumConstants.firstOrNull { it.name.equals(value, ignoreCase = true) }
-        }
-    }
-}
 // Example Enum
 enum class UserRole { ADMIN, USER, GUEST }
 
