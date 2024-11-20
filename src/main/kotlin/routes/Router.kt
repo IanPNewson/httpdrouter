@@ -2,12 +2,13 @@ package routes
 
 import TreeNode
 import buildZipTree
+import routes.authentication.AuthenticationFailedHandler
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 
-class Router(private val rootRoute : Route) {
+class Router(private val rootRoute : Route, val defaultAuthFailedHandler :AuthenticationFailedHandler? = null) {
 
     fun findRoute(path: String?): Route? {
         if (path == null) return null

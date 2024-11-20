@@ -1,15 +1,12 @@
 import fi.iki.elonen.NanoHTTPD
-import routes.Route
 import routes.Router
 import routes.authentication.AuthenticationFailedException
-import routes.authentication.AuthenticationFailedHandler
-import routes.authentication.Authenticator
 
 class WebApp(val router: Router) : NanoHTTPD(81) {
 
     override fun serve(_session: IHTTPSession?): Response {
 
-        val session =_session?:return internalError("No session provided")
+        val session = _session ?: return internalError("No session provided")
 
         try {
             val route = router.findRoute(session.uri) ?: return notFound("No route found for ${session.uri}")
@@ -18,37 +15,29 @@ class WebApp(val router: Router) : NanoHTTPD(81) {
 
             val authHandlers =
                 routePath.path.map { it.route.authenticationHandler }
-                .filterNotNull()
-                .reversed()
+                    .filterNotNull()
+                    .reversed()
 
             for (authenticationHandler in authHandlers) {
                 if (!authenticationHandler.isAuthenticated(session)) {
-//                    val authFailedHandler = authenticationHandler.authenticationFailedHandler
-//                        ?:
+                    val authFailHandler = authenticationHandler.authenticationFailedHandler ?: router.defaultAuthFailedHandler
+                    val authFailureResponse = authFailHandler?.response(
+                        session,
+                        route,
+                        authenticationHandler
+                    )
 
-//                    val authFailureResponse = authenticationHandler.response(authFailedHandler)
-                    throw AuthenticationFailedException(route, authenticationHandler)
-                } else if (authenticationHandler.requireParentAuthentication) {
-
+                    return authFailureResponse ?:
+                        throw AuthenticationFailedException(route, authenticationHandler)
                 }
-
             }
 
             val response = route.response(session)
             return response
-        } catch (ex :Exception) {
+        } catch (ex: Exception) {
             return internalError(ex)
         }
     }
 
 }
 
-class DefaultAuthFailedHandler() :AuthenticationFailedHandler {
-    override fun response(
-        session: NanoHTTPD.IHTTPSession,
-        route: Route,
-        failingAuth: Authenticator
-    ): NanoHTTPD.Response? {
-        return internalError("Not authenticated for $route")
-    }
-}

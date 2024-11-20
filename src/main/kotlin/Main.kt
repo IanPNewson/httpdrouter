@@ -1,10 +1,7 @@
 import routes.Action
 import routes.Directory
 import routes.Router
-import routes.authentication.Allow
-import routes.authentication.AllowIf
-import routes.authentication.Deny
-import routes.authentication.DenyIf
+import routes.authentication.*
 
 fun main(args: Array<String>) {
 
@@ -27,7 +24,7 @@ fun main(args: Array<String>) {
                     Action("time") {
                         _ -> text("${System.currentTimeMillis()}")
                     },
-                    Action("test") {
+                    Action("test", authenticationHandler = Deny()) {
                         val x = it.get<Float>("x")
                         val y = it.get<Float?>("y")
                         val str = it.get<String?>("str")
@@ -46,7 +43,7 @@ fun main(args: Array<String>) {
 
     val diContext = DIContext()
         .apply {
-            add{ -> Router(routes) }
+            add{ -> Router(routes, defaultAuthFailedHandler = RedirectAuthenticationFailedHandler("/login")) }
             add{ router : Router -> WebApp(router)}
             add {->this }
         }
