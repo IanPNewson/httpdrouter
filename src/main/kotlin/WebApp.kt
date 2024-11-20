@@ -49,6 +49,6 @@ class DefaultAuthFailedHandler() :AuthenticationFailedHandler {
         route: Route,
         failingAuth: Authenticator
     ): NanoHTTPD.Response? {
-        return text("Not authenticated for $route")
+        return internalError("Not authenticated for $route")
     }
 }

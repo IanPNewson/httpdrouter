@@ -11,3 +11,4 @@ interface AuthenticationFailedHandler {
                  failingAuth :Authenticator) :Response?
 
 }
+
