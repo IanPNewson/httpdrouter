@@ -1,6 +1,9 @@
 import fi.iki.elonen.NanoHTTPD
+import routes.Route
 import routes.Router
 import routes.authentication.AuthenticationFailedException
+import routes.authentication.AuthenticationFailedHandler
+import routes.authentication.Authenticator
 
 class WebApp(val router: Router) : NanoHTTPD(81) {
 
@@ -20,9 +23,15 @@ class WebApp(val router: Router) : NanoHTTPD(81) {
 
             for (authenticationHandler in authHandlers) {
                 if (!authenticationHandler.isAuthenticated(session)) {
+//                    val authFailedHandler = authenticationHandler.authenticationFailedHandler
+//                        ?:
 
+//                    val authFailureResponse = authenticationHandler.response(authFailedHandler)
                     throw AuthenticationFailedException(route, authenticationHandler)
+                } else if (authenticationHandler.requireParentAuthentication) {
+
                 }
+
             }
 
             val response = route.response(session)
@@ -34,3 +43,12 @@ class WebApp(val router: Router) : NanoHTTPD(81) {
 
 }
 
+class DefaultAuthFailedHandler() :AuthenticationFailedHandler {
+    override fun response(
+        session: NanoHTTPD.IHTTPSession,
+        route: Route,
+        failingAuth: Authenticator
+    ): NanoHTTPD.Response? {
+        return text("Not authenticated for $route")
+    }
+}

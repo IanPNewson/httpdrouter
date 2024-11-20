@@ -6,7 +6,8 @@ abstract class Authenticator {
 
     abstract fun isAuthenticated(session :NanoHTTPD.IHTTPSession) :Boolean
 
-    fun authenticationFailedResponse() :NanoHTTPD.Response? = null
+    val requireParentAuthentication :Boolean = true
 
+    open val authenticationFailedHandler :AuthenticationFailedHandler? = null
 }
 

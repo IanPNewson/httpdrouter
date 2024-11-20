@@ -23,9 +23,16 @@ fun main(args: Array<String>) {
 
     val actions = Directory.root(
             Directory("actions",
-                    authenticationHandler = DenyIf { _ -> System.currentTimeMillis()%2 == 0L},
-                    Action("time", authenticationHandler = AllowIf { _ -> System.currentTimeMillis()%3 == 0L}) {
+                    //authenticationHandler = DenyIf { _ -> System.currentTimeMillis()%2 == 0L},
+                    Action("time") {
                         _ -> text("${System.currentTimeMillis()}")
+                    },
+                    Action("test") {
+                        val x = it.get<Float>("x")
+                        val y = it.get<Float?>("y")
+                        val str = it.get<String?>("str")
+
+                        return@Action text("x: $x, y: $y, str: $str")
                     }
                 ),
             authHandler = Allow()
