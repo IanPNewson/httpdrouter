@@ -1,7 +1,9 @@
 import routes.Action
 import routes.Directory
 import routes.Router
-import routes.authentication.*
+import routes.authentication.Allow
+import routes.authentication.Deny
+import routes.authentication.RedirectAuthenticationFailedHandler
 
 fun main(args: Array<String>) {
 

@@ -1,7 +1,5 @@
 import fi.iki.elonen.NanoHTTPD
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.nio.charset.StandardCharsets
 
 fun redirect(url: String): NanoHTTPD.Response {
     return NanoHTTPD.newFixedLengthResponse(

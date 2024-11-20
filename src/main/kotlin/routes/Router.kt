@@ -124,12 +124,3 @@ class Router(private val rootRoute : Route, val defaultAuthFailedHandler :Authen
 
 }
 
-data class RoutePath(
-    val route :Route,
-    val rootRoute :Route,
-    val path :List<RoutePathStep>)
-
-data class RoutePathStep(
-    val route :Route,
-    val index :Int
-)
