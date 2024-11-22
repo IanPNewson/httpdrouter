@@ -9,7 +9,7 @@ import routes.authentication.Authenticator
 // Base Route class and its subclasses for different route types
 abstract class Route(val path: String,
                      val children: List<Route> = mutableListOf(),
-                     val authenticationHandler :Authenticator? = null) {
+                     val authenticationHandler : Authenticator? = null) {
 
     init {
         if (path.lastIndexOf("/") > 0) {
@@ -36,7 +36,7 @@ abstract class Route(val path: String,
     }
 
     override fun toString(): String {
-        return Companion.describeRouteTree(this)
+        return describeRouteTree(this)
     }
 
     companion object {

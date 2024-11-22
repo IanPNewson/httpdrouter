@@ -5,7 +5,7 @@ import routes.authentication.Allow
 import routes.authentication.Deny
 import routes.authentication.RedirectAuthenticationFailedHandler
 
-fun main(args: Array<String>) {
+fun main() {
 
     var zipRoutes = Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\templated-hielo\\hielo.zip")
         as Directory
@@ -24,7 +24,8 @@ fun main(args: Array<String>) {
             Directory("actions",
                     //authenticationHandler = DenyIf { _ -> System.currentTimeMillis()%2 == 0L},
                     Action("time") {
-                        _ -> text("${System.currentTimeMillis()}")
+                        _ ->
+                        text("${System.currentTimeMillis()}")
                     },
                     Action("test", authenticationHandler = Deny()) {
                         val x = it.get<Float>("x")
@@ -46,7 +47,7 @@ fun main(args: Array<String>) {
     val diContext = DIContext()
         .apply {
             add{ -> Router(routes, defaultAuthFailedHandler = RedirectAuthenticationFailedHandler("/login")) }
-            add{ router : Router -> WebApp(router)}
+            add{ router : Router -> WebApp(router) }
             add {->this }
         }
 

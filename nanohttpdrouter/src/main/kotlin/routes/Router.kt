@@ -8,7 +8,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 
-class Router(private val rootRoute : Route, val defaultAuthFailedHandler :AuthenticationFailedHandler? = null) {
+class Router(private val rootRoute : Route, val defaultAuthFailedHandler : AuthenticationFailedHandler? = null) {
 
     fun findRoute(path: String?): Route? {
         if (path == null) return null

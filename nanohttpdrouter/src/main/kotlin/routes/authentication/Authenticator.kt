@@ -8,6 +8,6 @@ abstract class Authenticator {
 
     val requireParentAuthentication :Boolean = true
 
-    open val authenticationFailedHandler :AuthenticationFailedHandler? = null
+    open val authenticationFailedHandler : AuthenticationFailedHandler? = null
 }
 

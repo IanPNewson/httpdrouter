@@ -27,9 +27,9 @@ class Directory(path: String, authenticationHandler: Authenticator? = null, chil
     )
 
     companion object {
-        fun root(authHandler :Authenticator? = null): Directory = Directory("", authHandler)
+        fun root(authHandler : Authenticator? = null): Directory = Directory("", authHandler)
 
-        fun root(vararg children: Route, authHandler :Authenticator? = null) :Directory {
+        fun root(vararg children: Route, authHandler : Authenticator? = null) : Directory {
             return root(authHandler).addChildren(*children)
         }
     }
