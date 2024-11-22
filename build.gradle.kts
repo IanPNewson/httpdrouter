@@ -12,6 +12,16 @@ repositories {
     mavenCentral()
 }
 
+val jdkVersion = 17
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(jdkVersion))
+    }
+    // Or shorter:
+    jvmToolchain(jdkVersion)
+}
+
 dependencies {
     implementation(project(mapOf("path" to ":nanohttpdrouter")))
     testImplementation(kotlin("test"))
@@ -25,7 +35,7 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "17"
 }
 
 application {
