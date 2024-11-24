@@ -12,7 +12,7 @@ abstract class Route(val path: String,
                      val authenticationHandler : Authenticator? = null) {
 
     init {
-        if (path.lastIndexOf("/") > 0) {
+        if (path.indexOf("/") > -1) {
             throw RuntimeException("Route paths should all be relative and therefore shouldn't contain / (unless it's the first character)")
         }
     }

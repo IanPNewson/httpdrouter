@@ -1,6 +1,4 @@
-import routes.Action
-import routes.Directory
-import routes.Router
+import routes.*
 import routes.authentication.Allow
 import routes.authentication.Deny
 import routes.authentication.RedirectAuthenticationFailedHandler
@@ -11,6 +9,10 @@ fun main() {
         as Directory
 
     staticRoutes.addDefaultDocuments()
+
+    var staticRouter = Router(staticRoutes)
+
+    val sampleScreen = staticRouter.findRoute("/images/screen_sample.png")?.route!!
 
     val actions = Directory.root(
             Directory("actions",
@@ -27,6 +29,7 @@ fun main() {
                         return@Action text("x: $x, y: $y, str: $str")
                     }
                 ),
+            AliasRoute("screen", sampleScreen),
             authHandler = Allow()
         )
 

@@ -7,7 +7,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
-import kotlin.streams.toList
 
 class Router(private val rootRoute : Route, val defaultAuthFailedHandler : AuthenticationFailedHandler? = null) {
 
@@ -40,12 +39,40 @@ class Router(private val rootRoute : Route, val defaultAuthFailedHandler : Authe
         return findRouteRecursively(rootRoute, matchedRoute.children, remainingParts, currentPath)
     }
 
+    fun replace(path: String, newRoute: Route) {
+        // Find the route using the string path
+        val routePath = findRoute(path) ?: throw RuntimeException("Route not found at path: $path")
+
+        // Retrieve the parent and the index of the target route
+        val parentStep = routePath.path.getOrNull(routePath.path.size - 2)
+            ?: throw RuntimeException("Cannot replace the root route.")
+
+        val parentRoute = parentStep.route
+        val targetIndex = parentRoute.children.indexOf(routePath.route)
+
+        if (targetIndex == -1) {
+            throw RuntimeException("Target route not found in parent's children: $path")
+        }
+
+        val oldRoute = routePath.route
+
+        // If the new route is a Directory, copy children from the old route
+        if (newRoute is Directory && oldRoute is Directory) {
+            newRoute.addChildren(*(oldRoute.children.toTypedArray()))
+        }
+
+        // Replace the route in the parent's children
+        (parentRoute.children as MutableList)[targetIndex] = newRoute
+    }
+
+
     companion object {
-        fun createRouteTreeFromDirectory(directoryPath: String): Route {
-            val rootPath = Paths.get(directoryPath)
+
+        fun createRouteTreeFromDirectory(path: String): Route {
+            val rootPath = Paths.get(path)
 
             if (!Files.isDirectory(rootPath)) {
-                throw IllegalArgumentException("Provided path is not a directory: $directoryPath")
+                throw IllegalArgumentException("Provided path is not a directory: $path")
             }
 
             fun buildRoutesFromPath(currentPath: Path, parentPath: Path = rootPath): Route {
@@ -63,7 +90,10 @@ class Router(private val rootRoute : Route, val defaultAuthFailedHandler : Authe
 
                     directoryRoute
                 } else {
-                    StaticFile(routePath, currentPath.toAbsolutePath().toString())
+                    val file = StaticFile(routePath, currentPath.toAbsolutePath().toString())
+                    return when (file) {
+                        else -> file
+                    }
                 }
             }
 
