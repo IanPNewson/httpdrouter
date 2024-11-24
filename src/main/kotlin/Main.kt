@@ -15,22 +15,10 @@ fun main() {
     val sampleScreen = staticRouter.findRoute("/images/screen_sample.png")?.route!!
 
     val actions = Directory.root(
-            Directory("actions",
-                    //authenticationHandler = DenyIf { _ -> System.currentTimeMillis()%2 == 0L},
-                    Action("time") {
-                        _ ->
-                        text("${System.currentTimeMillis()}")
-                    },
-                    Action("test", authenticationHandler = Deny()) {
-                        val x = it.get<Float>("x")
-                        val y = it.get<Float?>("y")
-                        val str = it.get<String?>("str")
-
-                        return@Action text("x: $x, y: $y, str: $str")
-                    }
-                ),
-            AliasRoute("screen", sampleScreen),
-            authHandler = Allow()
+            Action("screenlastupdate") { _ -> gson(object {
+                val LastUpdate = 0
+            })},
+            AliasRoute("screen", sampleScreen)
         )
 
     val routes = staticRoutes.merge(actions) as Directory

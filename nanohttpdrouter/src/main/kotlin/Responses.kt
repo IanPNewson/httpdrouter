@@ -1,3 +1,4 @@
+import com.google.gson.Gson
 import fi.iki.elonen.NanoHTTPD
 import java.io.ByteArrayInputStream
 
@@ -68,12 +69,12 @@ fun internalError(msg :String): NanoHTTPD.Response =
 fun text(text: String, httpStatus: NanoHTTPD.Response.Status = NanoHTTPD.Response.Status.OK) =
     NanoHTTPD.newFixedLengthResponse(httpStatus, "text/plain", text)
 
-//private val gson by lazy { Gson() }
-//
-//fun json(it: Any): NanoHTTPD.Response {
-//    val str = gson.toJson(it)
-//    return json(str)
-//}
+private val gson by lazy { Gson() }
+
+fun gson(it: Any): NanoHTTPD.Response {
+    val str = gson.toJson(it)
+    return json(str)
+}
 
 fun json(json: String): NanoHTTPD.Response {
     return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, "application/json", json)
