@@ -4,7 +4,8 @@ import routes.StaticFile
 
 fun Directory.addDefaultDocuments(
     defaultDocuments: List<String> = listOf(
-        "index.html"
+        "index.html",
+        "home.html"
     )
 ) {
     val defaultDocument = this.defaultDocument()
@@ -58,7 +59,7 @@ fun Route.merge(additional: Route): Route {
             }
 
             // Return a new merged Directory
-            Directory(this.path, mergedChildren.values.toList())
+            Directory(this.path, mergedChildren.values.toMutableList())
         }
 
         this is StaticFile && additional is StaticFile -> {

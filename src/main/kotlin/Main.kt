@@ -7,18 +7,10 @@ import routes.authentication.RedirectAuthenticationFailedHandler
 
 fun main() {
 
-    var zipRoutes = Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\templated-hielo\\hielo.zip")
+    var staticRoutes = Router.createRouteTreeFromDirectory("C:\\Users\\Ian\\source\\repos\\AndroidProjects\\Remoting\\server\\webapp\\")
         as Directory
 
-        /*Directory("")
-        .addChildren(
-            Directory("hielo")
-                .addChildren(routes.Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\templated-hielo\\hielo.zip")),
-            Directory("industrious")
-                .addChildren(routes.Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\htmltemplate.zip"))
-        )*/
-
-    zipRoutes.addDefaultDocuments()
+    staticRoutes.addDefaultDocuments()
 
     val actions = Directory.root(
             Directory("actions",
@@ -38,7 +30,7 @@ fun main() {
             authHandler = Allow()
         )
 
-    val routes = zipRoutes.merge(actions) as Directory
+    val routes = staticRoutes.merge(actions) as Directory
 
     println(routes.toString())
 

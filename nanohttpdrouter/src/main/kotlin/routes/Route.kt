@@ -8,7 +8,7 @@ import routes.authentication.Authenticator
 
 // Base Route class and its subclasses for different route types
 abstract class Route(val path: String,
-                     val children: List<Route> = mutableListOf(),
+                     val children: MutableList<Route> = mutableListOf(),
                      val authenticationHandler : Authenticator? = null) {
 
     init {
@@ -31,7 +31,7 @@ abstract class Route(val path: String,
         }
 
     open fun addChildren(vararg child: Route): Route {
-        (this.children as MutableList<Route>).addAll(child)
+        this.children.addAll(child)
         return this
     }
 

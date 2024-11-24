@@ -5,16 +5,16 @@ import fi.iki.elonen.NanoHTTPD
 import notFound
 import routes.authentication.Authenticator
 
-class Directory(path: String, authenticationHandler: Authenticator? = null, children: List<Route> = mutableListOf()) :
+class Directory(path: String, authenticationHandler: Authenticator? = null, children: MutableList<Route> = mutableListOf()) :
     Route(path, children, authenticationHandler) {
 
     constructor(path: String, authenticationHandler: Authenticator? = null, vararg children: Route) : this(
         path,
         authenticationHandler,
-        children.toList()
+        children.toMutableList()
     )
 
-    constructor(path: String, children: List<Route>) : this(
+    constructor(path: String, children: MutableList<Route>) : this(
         path,
         null,
         children
@@ -23,7 +23,7 @@ class Directory(path: String, authenticationHandler: Authenticator? = null, chil
     constructor(path: String, vararg children: Route) : this(
         path,
         null,
-        children.toList()
+        children.toMutableList()
     )
 
     companion object {

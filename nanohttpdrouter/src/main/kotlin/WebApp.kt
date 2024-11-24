@@ -9,9 +9,7 @@ class WebApp(val router: Router) : NanoHTTPD(81) {
         val session = _session ?: return internalError("No session provided")
 
         try {
-            val route = router.findRoute(session.uri) ?: return notFound("No route found for ${session.uri}")
-
-            val routePath = router.findRoutePath(route)
+            val routePath = router.findRoute(session.uri) ?: return notFound("No route found for ${session.uri}")
 
             val authHandlers =
                 routePath.path.map { it.route.authenticationHandler }
@@ -23,16 +21,16 @@ class WebApp(val router: Router) : NanoHTTPD(81) {
                     val authFailHandler = authenticationHandler.authenticationFailedHandler ?: router.defaultAuthFailedHandler
                     val authFailureResponse = authFailHandler?.response(
                         session,
-                        route,
+                        routePath.route,
                         authenticationHandler
                     )
 
                     return authFailureResponse ?:
-                        throw AuthenticationFailedException(route, authenticationHandler)
+                        throw AuthenticationFailedException(routePath.route, authenticationHandler)
                 }
             }
 
-            val response = route.response(session)
+            val response = routePath.route.response(session)
             return response
         } catch (ex: Exception) {
             return internalError(ex)
