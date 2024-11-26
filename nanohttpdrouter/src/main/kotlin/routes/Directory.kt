@@ -1,5 +1,6 @@
 package routes
 
+import DIContext
 import defaultDocument
 import fi.iki.elonen.NanoHTTPD
 import notFound
@@ -34,9 +35,9 @@ class Directory(path: String, authenticationHandler: Authenticator? = null, chil
         }
     }
 
-    override fun response(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
-        val default = this.defaultDocument() ?: return notFound("")
-        return default.response(session)
+    override fun getRouteHandler(diContext: DIContext): RouteHandler {
+        val default = this.defaultDocument() ?: return NotFoundRouteHandler()
+        return default.getRouteHandler(diContext)
     }
 
     override fun addChildren(vararg child: Route): Directory {

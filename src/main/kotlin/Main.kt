@@ -1,49 +1,72 @@
+import controllers.Controller
+import fi.iki.elonen.NanoHTTPD
 import routes.*
-import routes.authentication.Allow
-import routes.authentication.Deny
 import routes.authentication.RedirectAuthenticationFailedHandler
+import kotlinx.coroutines.*
 
 fun main() {
 
-    var staticRoutes = Router.createRouteTreeFromDirectory("C:\\Users\\Ian\\source\\repos\\AndroidProjects\\Remoting\\server\\webapp\\")
-        as Directory
+    val diContext = DIContext()
 
-    staticRoutes.addDefaultDocuments()
+    //launch(DIContextElement(diContext)) {
+        var staticRoutes =
+            Router.createRouteTreeFromDirectory("C:\\Users\\Ian\\source\\repos\\AndroidProjects\\Remoting\\server\\webapp\\")
+                    as Directory
 
-    var staticRouter = Router(staticRoutes)
+        staticRoutes.addDefaultDocuments()
 
-    val sampleScreen = staticRouter.findRoute("/images/screen_sample.png")?.route!!
+        var staticRouter = Router(staticRoutes)
 
-    val actions = Directory.root(
-            Action("screenlastupdate") { _ -> gson(object {
-                val LastUpdate = 0
-            })},
-            AliasRoute("screen", sampleScreen)
+        val sampleScreen = staticRouter.findRoute("/images/screen_sample.png")?.route!!
+
+        val actions = Directory.root(
+            Action("screenlastupdate") { _ ->
+                gson(object {
+                    val LastUpdate = 0
+                })
+            },
+            AliasRoute("screen", sampleScreen),
+            ControllerRoute(path = "button", clazz = ButtonController::class.java)
         )
 
-    val routes = staticRoutes.merge(actions) as Directory
+        val routes = staticRoutes.merge(actions) as Directory
 
-    println(routes.toString())
+        println(routes.toString())
 
-
-
-    val diContext = DIContext()
-        .apply {
-            add{ -> Router(routes, defaultAuthFailedHandler = RedirectAuthenticationFailedHandler("/login")) }
-            add{ router : Router -> WebApp(router) }
-            add {->this }
+        diContext.apply {
+            add { -> Router(routes, defaultAuthFailedHandler = RedirectAuthenticationFailedHandler("/login")) }
+            add { router: Router, diContext :DIContext -> WebApp(router, diContext) }
+            add { -> this }
+            //add { -> ButtonController() }
         }
 
-    val app = diContext.get<WebApp>()
+        val t2 = diContext.get { di: DIContext ->
+            T2(di)
+        }
 
-    Thread {
-        app.start()
-    }.start()
+        val app = diContext.get<WebApp>()
+
+        Thread {
+            app.start()
+        }.start()
+
+    //}
 
     println("Running")
     System.console().readLine()
 }
 
+class T2(val di :DIContext)
+
+
+class ButtonController(val thing :Nothing2) : Controller() {
+    override fun getResponse(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
+        return text("hi from button")
+    }
+}
+
+interface Nothing1
+class Nothing2(val n :Nothing1)
 
 class Test(val ting :Thing)
 

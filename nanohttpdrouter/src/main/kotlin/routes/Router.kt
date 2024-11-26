@@ -62,7 +62,7 @@ class Router(private val rootRoute : Route, val defaultAuthFailedHandler : Authe
         }
 
         // Replace the route in the parent's children
-        (parentRoute.children as MutableList)[targetIndex] = newRoute
+        parentRoute.children[targetIndex] = newRoute
     }
 
 
@@ -90,10 +90,7 @@ class Router(private val rootRoute : Route, val defaultAuthFailedHandler : Authe
 
                     directoryRoute
                 } else {
-                    val file = StaticFile(routePath, currentPath.toAbsolutePath().toString())
-                    return when (file) {
-                        else -> file
-                    }
+                    return StaticFile(routePath, currentPath.toAbsolutePath().toString())
                 }
             }
 

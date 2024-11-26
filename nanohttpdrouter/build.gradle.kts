@@ -15,12 +15,14 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("org.nanohttpd:nanohttpd:2.3.1")
     implementation("org.jsoup:jsoup:1.16.1")
     implementation("com.google.code.gson:gson:2.11.0")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+
 }
 
 tasks.test {

@@ -1,5 +1,6 @@
 package routes
 
+import DIContext
 import data
 import extension
 import fi.iki.elonen.NanoHTTPD
@@ -7,8 +8,8 @@ import notFound
 import java.nio.file.Path
 import kotlin.io.path.readBytes
 
-open class StaticFile(path: String, val resourcePath: String) : Route(path) {
-    override fun response(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
+open class StaticFile(path: String, val resourcePath: String) : Route(path), RouteHandler {
+    override fun getResponse(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
         val mimeType =
             mimeType ?: return notFound("Can't provide a response for $path as there is no supported  mime type")
 
@@ -21,6 +22,8 @@ open class StaticFile(path: String, val resourcePath: String) : Route(path) {
             .readBytes()
         return bytes
     }
+
+    override fun getRouteHandler(diContext: DIContext): RouteHandler = this
 
     override val extension: String?
         get() {

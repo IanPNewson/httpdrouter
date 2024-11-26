@@ -2,7 +2,9 @@ import fi.iki.elonen.NanoHTTPD
 import routes.Router
 import routes.authentication.AuthenticationFailedException
 
-class WebApp(val router: Router) : NanoHTTPD(81) {
+class WebApp(
+    val router: Router,
+    val diContext: DIContext) : NanoHTTPD(81) {
 
     override fun serve(_session: IHTTPSession?): Response {
 
@@ -30,7 +32,10 @@ class WebApp(val router: Router) : NanoHTTPD(81) {
                 }
             }
 
-            val response = routePath.route.response(session)
+            val route = routePath.route
+            val routeHandler = route.getRouteHandler(diContext)
+
+            val response = routeHandler.getResponse(session)
             return response
         } catch (ex: Exception) {
             return internalError(ex)

@@ -26,6 +26,7 @@ dependencies {
     implementation(project(mapOf("path" to ":nanohttpdrouter")))
     testImplementation(kotlin("test"))
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.21")
     implementation("org.nanohttpd:nanohttpd:2.3.1")
 }

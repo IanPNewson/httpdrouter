@@ -1,5 +1,6 @@
 package routes
 
+import DIContext
 import DefaultDocument
 import MimeTypes
 import extension
@@ -17,9 +18,7 @@ abstract class Route(val path: String,
         }
     }
 
-
-
-    abstract fun response(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response
+    abstract fun getRouteHandler(diContext: DIContext):RouteHandler
 
     open val extension: String?
         get() = this.path.extension()
@@ -63,5 +62,4 @@ abstract class Route(val path: String,
     }
 
 }
-
 

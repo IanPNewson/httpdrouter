@@ -1,5 +1,6 @@
 package routes
 
+import DIContext
 import MimeTypes
 import extension
 import fi.iki.elonen.NanoHTTPD
@@ -7,8 +8,8 @@ import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
-class ZipFileRoute(path: String, private val zip: ZipFile, private val zipEntry: ZipEntry) : Route(path) {
-    override fun response(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
+class ZipFileRoute(path: String, private val zip: ZipFile, private val zipEntry: ZipEntry) : Route(path), RouteHandler {
+    override fun getResponse(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
         val extension =
             zipEntry.name.extension() ?: throw RuntimeException("Cannot serve a ZipEntry without an extension")
         val mimeType = MimeTypes[extension] ?: "application/octet-stream"
@@ -21,4 +22,6 @@ class ZipFileRoute(path: String, private val zip: ZipFile, private val zipEntry:
             bytes.size.toLong()
         )
     }
+
+    override fun getRouteHandler(diContext: DIContext): RouteHandler = this
 }
