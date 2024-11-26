@@ -3,12 +3,6 @@ package dependencyinjection
 import kotlin.reflect.KClass
 
 class DIContext {
-    companion object {
-//        val singleton: DIContext by lazy {
-//            DIContext()
-//        }
-
-    }
 
     private val producers = mutableListOf<Producer>()
 
@@ -51,7 +45,6 @@ class DIContext {
         val producer: Producer
 
         if (!matches.any()) {
-//            throw RuntimeException("No producer for type $clazz")
             producer = GenericProducer(clazz)
         } else {
             producer = matches.first()
@@ -100,5 +93,3 @@ class DIContext {
     }
 
 }
-
-
