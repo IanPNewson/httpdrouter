@@ -1,7 +1,7 @@
 package routes
 
-import DIContext
 import data
+import dependencyinjection.DIContext
 import extension
 import fi.iki.elonen.NanoHTTPD
 import notFound

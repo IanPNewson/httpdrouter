@@ -1,8 +1,8 @@
 package routes
 
-import DIContext
 import DefaultDocument
 import MimeTypes
+import dependencyinjection.DIContext
 import extension
 import fi.iki.elonen.NanoHTTPD
 import routes.authentication.Authenticator

@@ -2,7 +2,6 @@ package dependencyinjection
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
@@ -176,10 +175,6 @@ class DIContext {
 
 }
 
-class DIContextElement(val context: DIContext) : AbstractCoroutineContextElement(DIContextElement) {
-    companion object Key : CoroutineContext.Key<DIContextElement>
-}
-
 val CoroutineContext.diContext: DIContext
     get() = (this[DIContextElement]?.context
         ?: throw IllegalStateException("DIContext not found in CoroutineContext"))
@@ -194,8 +189,3 @@ fun CoroutineScope.withDIContext(context: DIContext, block: suspend CoroutineSco
     }
 }
 
-class DIConstructionException(
-    val constructingType: Class<*>,
-    val context: DIContext,
-    val reason: String
-) : RuntimeException("Error constructing type ${constructingType.name} via DIContext: $reason")

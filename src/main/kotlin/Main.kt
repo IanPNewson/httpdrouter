@@ -1,4 +1,5 @@
 import controllers.Controller
+import dependencyinjection.DIContext
 import fi.iki.elonen.NanoHTTPD
 import routes.*
 import routes.authentication.RedirectAuthenticationFailedHandler
@@ -38,6 +39,7 @@ fun main() {
             add { router: Router, diContext :DIContext -> WebApp(router, diContext) }
             add { -> this }
             //add { -> ButtonController() }
+            add<Nothing1> { -> object :Nothing1 {} }
         }
 
         val t2 = diContext.get { di: DIContext ->

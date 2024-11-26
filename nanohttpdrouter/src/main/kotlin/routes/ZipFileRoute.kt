@@ -1,7 +1,7 @@
 package routes
 
-import DIContext
 import MimeTypes
+import dependencyinjection.DIContext
 import extension
 import fi.iki.elonen.NanoHTTPD
 import java.nio.file.Path

@@ -1,10 +1,12 @@
+import dependencyinjection.DIContext
 import fi.iki.elonen.NanoHTTPD
 import routes.Router
 import routes.authentication.AuthenticationFailedException
 
 class WebApp(
     val router: Router,
-    val diContext: DIContext) : NanoHTTPD(81) {
+    val diContext: DIContext
+) : NanoHTTPD(81) {
 
     override fun serve(_session: IHTTPSession?): Response {
 

@@ -1,6 +1,6 @@
 package routes
 
-import DIContext
+import dependencyinjection.DIContext
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.IHTTPSession
 import fi.iki.elonen.NanoHTTPD.Response

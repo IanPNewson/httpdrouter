@@ -1,7 +1,7 @@
 package routes
 
-import DIContext
 import defaultDocument
+import dependencyinjection.DIContext
 import fi.iki.elonen.NanoHTTPD
 import notFound
 import routes.authentication.Authenticator

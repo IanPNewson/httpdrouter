@@ -1,7 +1,7 @@
 package routes
 
-import DIContext
 import controllers.Controller
+import dependencyinjection.DIContext
 import fi.iki.elonen.NanoHTTPD
 
 class ControllerRoute<T :Controller>(

@@ -1,6 +1,6 @@
 package routes
 
-import DIContext
+import dependencyinjection.DIContext
 import fi.iki.elonen.NanoHTTPD
 
 class AliasRoute(path :String, val target :Route) : Route(path) {
