@@ -1,8 +1,5 @@
 package dependencyinjection
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
 class DIContext {
@@ -102,90 +99,6 @@ class DIContext {
         producers.add(Producer3(producer, returnClass, arg1Class, arg2Class))
     }
 
-    abstract class Producer(val numArgs: Int) {
-
-        abstract fun produce(context: DIContext): Any
-
-        abstract val returnType: KClass<*>
-
-    }
-
-    class Producer1<T : Any>(
-        val producer: () -> T,
-        private val clazz: KClass<T>
-    ) : Producer(0) {
-
-        override fun produce(context: DIContext): Any {
-            return producer()
-        }
-
-        override val returnType: KClass<*>
-            get() = this.clazz
-
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    class Producer2<T : Any, U : Any>(
-        val producer: (U) -> T,
-        private val returnClazz: KClass<T>,
-        private val argClazz: KClass<U>
-    ) : Producer(1) {
-
-        @Suppress("UNCHECKED_CAST")
-        override fun produce(context: DIContext): Any {
-            return producer(context.get(argClazz.java) as U)
-        }
-
-        override val returnType: KClass<*>
-            get() = this.returnClazz
-
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private class Producer3<T : Any, U : Any, V : Any>(
-        val producer: (U, V) -> T,
-        override val returnType: KClass<*>,
-        private val arg1Clazz: KClass<U>,
-        private val arg2Clazz: KClass<V>
-    ) : Producer(2) {
-
-        override fun produce(context: DIContext): Any {
-            return producer(
-                context.get(arg1Clazz.java) as U,
-                context.get(arg2Clazz.java) as V
-            )
-        }
-
-    }
-
-    private class GenericProducer(val clazz: Class<*>) : Producer(0) {
-        override fun produce(context: DIContext): Any {
-            val ctors = clazz.constructors.sortedByDescending { it.parameterCount }
-            if (ctors.isEmpty()) throw DIConstructionException(clazz, context, "No constructor")
-            val ctor = ctors.first()
-            val args = ctor.parameters.map {
-                context.get(it.type)
-            }.toTypedArray()
-            return ctor.newInstance(*args)
-        }
-
-        override val returnType: KClass<*>
-            get() = clazz.kotlin
-    }
-
 }
 
-val CoroutineContext.diContext: DIContext
-    get() = (this[DIContextElement]?.context
-        ?: throw IllegalStateException("DIContext not found in CoroutineContext"))
-
-fun CoroutineScope.withDIContext(context: DIContext, block: suspend CoroutineScope.() -> Unit) {
-    // Create a new scope by adding the DIContextElement to the existing coroutine context
-    val newScope = CoroutineScope(this.coroutineContext + DIContextElement(context))
-
-    // Launch the block in the new scope
-    newScope.launch {
-        block()
-    }
-}
 
