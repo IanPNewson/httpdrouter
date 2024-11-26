@@ -1,3 +1,5 @@
+package dependencyinjection
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.coroutines.AbstractCoroutineContextElement
