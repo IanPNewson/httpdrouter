@@ -1,5 +1,7 @@
 package dependencyinjection
 
+import java.util.*
+import kotlin.collections.ArrayDeque
 import kotlin.reflect.KClass
 
 /**
@@ -16,6 +18,10 @@ class DIContext {
 
     // Cache to store already-created dependencies for reuse
     private val cache = mutableMapOf<Producer, Any>()
+
+    // Used track the construction stack for error reporting
+    private val resolvingStack: ThreadLocal<ArrayDeque<Class<*>>> = ThreadLocal.withInitial { ArrayDeque() }
+
 
     /**
      * Registers a zero-argument producer for a specific type.
@@ -104,26 +110,48 @@ class DIContext {
      * @return The resolved object.
      */
     fun get(clazz: Class<*>): Any {
-        val matches = producers
-            .filter { clazz == it.returnType.java }
-            .sortedByDescending { it.numArgs }
+        val stack = resolvingStack.get()
 
-        val producer: Producer = if (matches.isEmpty()) {
-            GenericProducer(clazz)
-        } else {
-            matches.first()
+        // Detect circular dependencies
+        if (stack.contains(clazz)) {
+            val cycle = stack.joinToString(" -> ") { it.name }
+            throw IllegalStateException("Circular dependency detected: $cycle -> ${clazz.name}")
         }
 
-        // Return cached instance if available
-        if (cache.containsKey(producer)) {
-            return cache[producer] as Any
-        }
+        stack.addFirst(clazz) // Push the current class to the stack
 
-        // Produce and cache the instance
-        val result = producer.produce(this)
-        cache[producer] = result
-        return result
+        try {
+            val matches = producers
+                .filter { clazz == it.returnType.java }
+                .sortedByDescending { it.numArgs }
+
+            val producer: Producer = if (matches.isEmpty()) {
+                GenericProducer(clazz)
+            } else {
+                matches.first()
+            }
+
+            // Return cached instance if available
+            if (cache.containsKey(producer)) {
+                return cache[producer] as Any
+            }
+
+            // Produce and cache the instance
+            val result = producer.produce(this)
+            cache[producer] = result
+            return result
+        } catch (e: Exception) {
+            // Include stack trace in error message
+            val dependencyPath = stack.joinToString(" -> ") { it.name }
+            throw IllegalStateException(
+                "Error resolving dependency for ${clazz.name}. Dependency stack: $dependencyPath",
+                e
+            )
+        } finally {
+            stack.removeFirst() // Ensure the class is removed from the stack even if an exception occurs
+        }
     }
+
 
     /**
      * Resolves and retrieves an instance of the specified type using type inference.

@@ -8,7 +8,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 
-class Router(private val rootRoute : Route, val defaultAuthFailedHandler : AuthenticationFailedHandler? = null) {
+class Router(private val rootRoute: Route, val defaultAuthFailedHandler: AuthenticationFailedHandler? = null) {
 
     fun findRoute(path: String?): RoutePath? {
         if (path.isNullOrEmpty()) return null
@@ -108,30 +108,32 @@ class Router(private val rootRoute : Route, val defaultAuthFailedHandler : Authe
             return createRouteTreeFromZip(zip, topLevelFolder)
         }
 
-        fun createRouteTreeFromZip(zipFile: ZipFile, topLevelFolder: String? = null): Route {
-            zipFile.use { zip ->
-                // Build the TreeNode structure
-                val rootTreeNode = zip.buildZipTree()
+        fun createRouteTreeFromZip(zip: ZipFile, topLevelFolder: String? = null): Route {
+            // Build the TreeNode structure
+            val rootTreeNode = zip.buildZipTree()
 
-                // Find the starting node based on the top-level folder
-                val startingNode = if (!topLevelFolder.isNullOrEmpty()) {
-                    rootTreeNode.children.find { it.name == topLevelFolder && it.isDirectory }
-                        ?: throw IllegalArgumentException("Top-level folder '$topLevelFolder' not found in ZIP file.")
-                } else {
-                    rootTreeNode
-                }
-
-                // Recursively build the Route tree from the TreeNode structure
-                fun buildRouteTree(node: TreeNode): Route {
-                    return if (node.isDirectory) {
-                        Directory(node.name, node.children.map { buildRouteTree(it) }.toMutableList())
-                    } else {
-                        ZipFileRoute(node.name, zip, node.zipEntry ?: throw IllegalStateException("Missing ZipEntry for file node: ${node.name}"))
-                    }
-                }
-
-                return buildRouteTree(startingNode)
+            // Find the starting node based on the top-level folder
+            val startingNode = if (!topLevelFolder.isNullOrEmpty()) {
+                rootTreeNode.children.find { it.name == topLevelFolder && it.isDirectory }
+                    ?: throw IllegalArgumentException("Top-level folder '$topLevelFolder' not found in ZIP file.")
+            } else {
+                rootTreeNode
             }
+
+            // Recursively build the Route tree from the TreeNode structure
+            fun buildRouteTree(node: TreeNode): Route {
+                return if (node.isDirectory) {
+                    Directory(node.name, node.children.map { buildRouteTree(it) }.toMutableList())
+                } else {
+                    ZipFileRoute(
+                        node.name,
+                        zip,
+                        node.zipEntry ?: throw IllegalStateException("Missing ZipEntry for file node: ${node.name}")
+                    )
+                }
+            }
+
+            return buildRouteTree(startingNode)
         }
 
     }

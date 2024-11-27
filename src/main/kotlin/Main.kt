@@ -5,6 +5,7 @@ import fi.iki.elonen.NanoHTTPD
 import routes.*
 import routes.authentication.RedirectAuthenticationFailedHandler
 import kotlinx.coroutines.*
+import java.util.zip.ZipFile
 
 fun main() {
 
@@ -32,22 +33,15 @@ fun main() {
 
     val routes = staticRoutes.merge(actions) as Directory
 
-    val hieloRoutes = Router.createRouteTreeFromZip("C:\\Users\\Ian\\Downloads\\templated-hielo\\hielo.zip")
-        .also { (it as Directory).addDefaultDocuments() }
-
     diContext.apply {
-        //add { -> Router(routes, defaultAuthFailedHandler = RedirectAuthenticationFailedHandler("/login")) }
-        add { -> Router(hieloRoutes)}
+        add { -> Router(routes, defaultAuthFailedHandler = RedirectAuthenticationFailedHandler("/login")) }
+        add { routes :Route -> Router(routes)}
         add { router: Router, diContext: DIContext -> WebApp(router, diContext) }
         add { -> this }
         add<Nothing1> { -> object : Nothing1 {} }
     }
 
-    try {
-        val root = diContext.get<Route>()
-    } catch (ex :DIConstructionException) {
-        throw ex;
-    }
+    diContext.get<Nothing3>()
 
     val app = diContext.get<WebApp>()
 
@@ -57,9 +51,27 @@ fun main() {
 
     println("Running")
     System.console().readLine()
+
 }
 
-class T2(val di: DIContext)
+class DebuggableZipFile(filePath: String) : ZipFile(filePath) {
+    private var isClosed = false
+
+    override fun close() {
+        if (isClosed) {
+            throw IllegalStateException("Attempting to close an already closed ZipFile!")
+        }
+        println("ZipFile is being closed")
+        isClosed = true
+        super.close()
+    }
+
+    fun checkIfClosed() {
+        if (isClosed) {
+            throw IllegalStateException("ZipFile is already closed!")
+        }
+    }
+}
 
 
 class ButtonController(val thing: Nothing2) : Controller() {
@@ -70,6 +82,9 @@ class ButtonController(val thing: Nothing2) : Controller() {
 
 interface Nothing1
 class Nothing2(val n: Nothing1)
+
+class Nothing3(n:Nothing4)
+class Nothing4(n:Nothing3)
 
 class Test(val ting: Thing)
 
