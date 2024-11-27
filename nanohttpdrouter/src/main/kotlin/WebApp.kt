@@ -1,7 +1,11 @@
-import dependencyinjection.DIContext
+package org.iannewson.httpdrouter
+
 import fi.iki.elonen.NanoHTTPD
-import routes.Router
-import routes.authentication.AuthenticationFailedException
+import org.iannewson.httpdrouter.dependencyinjection.DIContext
+import org.iannewson.httpdrouter.responses.internalError
+import org.iannewson.httpdrouter.responses.notFound
+import org.iannewson.httpdrouter.routes.Router
+import org.iannewson.httpdrouter.routes.authentication.AuthenticationFailedException
 
 class WebApp(
     val router: Router,

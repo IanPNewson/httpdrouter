@@ -1,4 +1,4 @@
-package routes
+package org.iannewson.httpdrouter.routes
 
 import fi.iki.elonen.NanoHTTPD
 

@@ -1,4 +1,4 @@
-package dependencyinjection
+package org.iannewson.httpdrouter.dependencyinjection
 
 import kotlin.reflect.KClass
 

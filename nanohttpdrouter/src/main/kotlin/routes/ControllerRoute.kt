@@ -1,10 +1,9 @@
-package routes
+package org.iannewson.httpdrouter.routes
 
-import controllers.Controller
-import dependencyinjection.DIContext
-import fi.iki.elonen.NanoHTTPD
+import org.iannewson.httpdrouter.controllers.Controller
+import org.iannewson.httpdrouter.dependencyinjection.DIContext
 
-class ControllerRoute<T :Controller>(
+class ControllerRoute<T : Controller>(
     path: String,
     val clazz: Class<T>
 ) : Route(path) {

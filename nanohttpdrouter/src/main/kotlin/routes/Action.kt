@@ -1,10 +1,10 @@
-package routes
+package org.iannewson.httpdrouter.routes
 
-import dependencyinjection.DIContext
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.IHTTPSession
 import fi.iki.elonen.NanoHTTPD.Response
-import routes.authentication.Authenticator
+import org.iannewson.httpdrouter.dependencyinjection.DIContext
+import org.iannewson.httpdrouter.routes.authentication.Authenticator
 
 // routes.Action class that supports automatic parameter binding with Enum support
 class Action(

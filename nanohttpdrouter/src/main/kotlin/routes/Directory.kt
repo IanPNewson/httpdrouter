@@ -1,10 +1,7 @@
-package routes
+package org.iannewson.httpdrouter.routes
 
-import defaultDocument
-import dependencyinjection.DIContext
-import fi.iki.elonen.NanoHTTPD
-import notFound
-import routes.authentication.Authenticator
+import org.iannewson.httpdrouter.dependencyinjection.DIContext
+import org.iannewson.httpdrouter.routes.authentication.Authenticator
 
 class Directory(path: String, authenticationHandler: Authenticator? = null, children: MutableList<Route> = mutableListOf()) :
     Route(path, children, authenticationHandler) {

@@ -1,6 +1,6 @@
-package routes.authentication
+package org.iannewson.httpdrouter.routes.authentication
 
-import routes.Route
+import org.iannewson.httpdrouter.routes.Route
 
 class AuthenticationFailedException(val route : Route,
                                     val authHandler : Authenticator

@@ -1,10 +1,9 @@
-package routes
+package org.iannewson.httpdrouter.routes
 
-import MimeTypes
-import dependencyinjection.DIContext
-import extension
 import fi.iki.elonen.NanoHTTPD
-import java.nio.file.Path
+import org.iannewson.httpdrouter.MimeTypes
+import org.iannewson.httpdrouter.dependencyinjection.DIContext
+import org.iannewson.httpdrouter.extension
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 

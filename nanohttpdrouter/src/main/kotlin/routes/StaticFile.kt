@@ -1,10 +1,10 @@
-package routes
+package org.iannewson.httpdrouter.routes
 
-import data
-import dependencyinjection.DIContext
-import extension
 import fi.iki.elonen.NanoHTTPD
-import notFound
+import org.iannewson.httpdrouter.dependencyinjection.DIContext
+import org.iannewson.httpdrouter.extension
+import org.iannewson.httpdrouter.responses.data
+import org.iannewson.httpdrouter.responses.notFound
 import java.nio.file.Path
 import kotlin.io.path.readBytes
 

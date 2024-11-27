@@ -1,3 +1,5 @@
+package org.iannewson.httpdrouter.responses
+
 import com.google.gson.Gson
 import fi.iki.elonen.NanoHTTPD
 import java.io.ByteArrayInputStream

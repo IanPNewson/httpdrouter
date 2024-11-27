@@ -1,7 +1,5 @@
-package dependencyinjection
+package org.iannewson.httpdrouter.dependencyinjection
 
-import java.util.*
-import kotlin.collections.ArrayDeque
 import kotlin.reflect.KClass
 
 /**

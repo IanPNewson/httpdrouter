@@ -1,3 +1,5 @@
+package org.iannewson.httpdrouter
+
 import fi.iki.elonen.NanoHTTPD.IHTTPSession
 import kotlin.reflect.typeOf
 

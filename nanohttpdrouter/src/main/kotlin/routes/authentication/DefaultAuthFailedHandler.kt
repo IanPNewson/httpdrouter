@@ -1,8 +1,8 @@
-package routes.authentication
+package org.iannewson.httpdrouter.routes.authentication
 
 import fi.iki.elonen.NanoHTTPD
-import internalError
-import routes.Route
+import org.iannewson.httpdrouter.responses.internalError
+import org.iannewson.httpdrouter.routes.Route
 
 class DefaultAuthFailedHandler() : AuthenticationFailedHandler {
     override fun response(

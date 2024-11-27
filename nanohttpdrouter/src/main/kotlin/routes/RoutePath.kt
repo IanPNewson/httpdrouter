@@ -1,4 +1,4 @@
-package routes
+package org.iannewson.httpdrouter.routes
 
 data class RoutePath(
     val route : Route,

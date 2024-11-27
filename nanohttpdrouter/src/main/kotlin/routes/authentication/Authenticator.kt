@@ -1,4 +1,4 @@
-package routes.authentication
+package org.iannewson.httpdrouter.routes.authentication
 
 import fi.iki.elonen.NanoHTTPD
 

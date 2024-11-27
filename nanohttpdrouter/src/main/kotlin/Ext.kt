@@ -1,3 +1,5 @@
+package org.iannewson.httpdrouter
+
 fun String.extension() :String? {
     if (this == null) return null
     val lastIndex = this.lastIndexOf('.')

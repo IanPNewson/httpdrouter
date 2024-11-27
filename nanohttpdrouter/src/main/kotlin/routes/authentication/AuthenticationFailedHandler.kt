@@ -1,8 +1,8 @@
-package routes.authentication
+package org.iannewson.httpdrouter.routes.authentication
 
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.Response
-import routes.Route
+import org.iannewson.httpdrouter.routes.Route
 
 interface AuthenticationFailedHandler {
 

@@ -1,3 +1,5 @@
+package org.iannewson.httpdrouter
+
 object MimeTypes {
     val fileExtensionToMimeType = mapOf(
 

@@ -1,11 +1,9 @@
-package routes
+package org.iannewson.httpdrouter.routes
 
-import DefaultDocument
-import MimeTypes
-import dependencyinjection.DIContext
-import extension
-import fi.iki.elonen.NanoHTTPD
-import routes.authentication.Authenticator
+import org.iannewson.httpdrouter.MimeTypes
+import org.iannewson.httpdrouter.dependencyinjection.DIContext
+import org.iannewson.httpdrouter.extension
+import org.iannewson.httpdrouter.routes.authentication.Authenticator
 
 // Base Route class and its subclasses for different route types
 abstract class Route(val path: String,

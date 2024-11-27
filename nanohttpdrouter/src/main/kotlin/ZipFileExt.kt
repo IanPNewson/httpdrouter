@@ -1,3 +1,5 @@
+package org.iannewson.httpdrouter
+
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 

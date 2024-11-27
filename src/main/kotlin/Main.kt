@@ -1,10 +1,11 @@
-import controllers.Controller
-import dependencyinjection.DIConstructionException
-import dependencyinjection.DIContext
 import fi.iki.elonen.NanoHTTPD
-import routes.*
-import routes.authentication.RedirectAuthenticationFailedHandler
-import kotlinx.coroutines.*
+import org.iannewson.httpdrouter.WebApp
+import org.iannewson.httpdrouter.controllers.Controller
+import org.iannewson.httpdrouter.dependencyinjection.DIContext
+import org.iannewson.httpdrouter.responses.gson
+import org.iannewson.httpdrouter.responses.text
+import org.iannewson.httpdrouter.routes.*
+import org.iannewson.httpdrouter.routes.authentication.RedirectAuthenticationFailedHandler
 import java.util.zip.ZipFile
 
 fun main() {
@@ -34,6 +35,7 @@ fun main() {
     val routes = staticRoutes.merge(actions) as Directory
 
     diContext.apply {
+        add<Route> { -> routes }
         add { -> Router(routes, defaultAuthFailedHandler = RedirectAuthenticationFailedHandler("/login")) }
         add { routes :Route -> Router(routes)}
         add { router: Router, diContext: DIContext -> WebApp(router, diContext) }
@@ -41,7 +43,7 @@ fun main() {
         add<Nothing1> { -> object : Nothing1 {} }
     }
 
-    diContext.get<Nothing3>()
+    //diContext.get<Nothing3>()
 
     val app = diContext.get<WebApp>()
 
@@ -78,6 +80,7 @@ class ButtonController(val thing: Nothing2) : Controller() {
     override fun getResponse(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
         return text("hi from button")
     }
+
 }
 
 interface Nothing1

@@ -1,8 +1,8 @@
-package routes
+package org.iannewson.httpdrouter.routes
 
-import TreeNode
-import buildZipTree
-import routes.authentication.AuthenticationFailedHandler
+import org.iannewson.httpdrouter.TreeNode
+import org.iannewson.httpdrouter.buildZipTree
+import org.iannewson.httpdrouter.routes.authentication.AuthenticationFailedHandler
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths

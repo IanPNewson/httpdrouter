@@ -1,6 +1,4 @@
-import routes.Directory
-import routes.Route
-import routes.StaticFile
+package org.iannewson.httpdrouter.routes
 
 fun Directory.addDefaultDocuments(
     defaultDocuments: List<String> = listOf(

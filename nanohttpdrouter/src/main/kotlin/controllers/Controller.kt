@@ -1,11 +1,7 @@
-package controllers
+package org.iannewson.httpdrouter.controllers
 
-import fi.iki.elonen.NanoHTTPD
-import routes.RouteHandler
+import org.iannewson.httpdrouter.routes.RouteHandler
 
 abstract class Controller : RouteHandler {
-    fun handleRequest(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
-        TODO()
-    }
 
 }

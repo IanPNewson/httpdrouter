@@ -1,8 +1,8 @@
-package routes.authentication
+package org.iannewson.httpdrouter.routes.authentication
 
 import fi.iki.elonen.NanoHTTPD
-import redirect
-import routes.Route
+import org.iannewson.httpdrouter.responses.redirect
+import org.iannewson.httpdrouter.routes.Route
 
 class RedirectAuthenticationFailedHandler(val url:String) : AuthenticationFailedHandler {
     override fun response(
