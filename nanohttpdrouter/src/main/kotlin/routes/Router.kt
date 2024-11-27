@@ -97,7 +97,7 @@ class Router(private val rootRoute: Route, val defaultAuthFailedHandler: Authent
             return buildRoutesFromPath(rootPath)
         }
 
-        fun createRouteTreeFromZip(zipFilePath: String, topLevelFolder: String? = null): Route {
+        fun createRouteTreeFromZip(zipFilePath: String, topLevelFolder: String? = null): Directory {
             val zipPath = Path.of(zipFilePath)
 
             if (!zipPath.toFile().exists() || !zipPath.toFile().isFile) {
@@ -108,7 +108,7 @@ class Router(private val rootRoute: Route, val defaultAuthFailedHandler: Authent
             return createRouteTreeFromZip(zip, topLevelFolder)
         }
 
-        fun createRouteTreeFromZip(zip: ZipFile, topLevelFolder: String? = null): Route {
+        fun createRouteTreeFromZip(zip: ZipFile, topLevelFolder: String? = null): Directory {
             // Build the TreeNode structure
             val rootTreeNode = zip.buildZipTree()
 
@@ -133,7 +133,7 @@ class Router(private val rootRoute: Route, val defaultAuthFailedHandler: Authent
                 }
             }
 
-            return buildRouteTree(startingNode)
+            return buildRouteTree(startingNode) as Directory
         }
 
     }

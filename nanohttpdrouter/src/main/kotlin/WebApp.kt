@@ -4,13 +4,17 @@ import fi.iki.elonen.NanoHTTPD
 import org.iannewson.httpdrouter.dependencyinjection.DIContext
 import org.iannewson.httpdrouter.responses.internalError
 import org.iannewson.httpdrouter.responses.notFound
+import org.iannewson.httpdrouter.routes.Route
 import org.iannewson.httpdrouter.routes.Router
 import org.iannewson.httpdrouter.routes.authentication.AuthenticationFailedException
 
 class WebApp(
     val router: Router,
-    val diContext: DIContext
+    val diContext: DIContext = DIContext()
 ) : NanoHTTPD(81) {
+
+    constructor(routes :Route, diContext: DIContext = DIContext()) :
+            this(Router(routes), diContext)
 
     override fun serve(_session: IHTTPSession?): Response {
 
