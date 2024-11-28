@@ -4,11 +4,13 @@ import org.iannewson.httpdrouter.MimeTypes
 import org.iannewson.httpdrouter.dependencyinjection.DIContext
 import org.iannewson.httpdrouter.extension
 import org.iannewson.httpdrouter.routes.authentication.Authenticator
+import org.iannewson.httpdrouter.routes.postprocessing.ResponsePostProcessor
 
 // Base Route class and its subclasses for different route types
 abstract class Route(val path: String,
                      val children: MutableList<Route> = mutableListOf(),
-                     val authenticationHandler : Authenticator? = null) {
+                     val authenticationHandler : Authenticator? = null,
+                     private val postProcessors: MutableList<ResponsePostProcessor> = mutableListOf()) {
 
     init {
         if (path.indexOf("/") > -1) {
@@ -32,6 +34,13 @@ abstract class Route(val path: String,
         return this
     }
 
+    fun addPostProcessor(postProcessor: ResponsePostProcessor) :Route {
+        this.postProcessors.add(postProcessor)
+        return this
+    }
+
+    open fun collectPostProcessors() :List<ResponsePostProcessor> = postProcessors
+
     override fun toString(): String {
         return describeRouteTree(this)
     }
@@ -47,7 +56,7 @@ abstract class Route(val path: String,
         fun describeRouteTree(route: Route, indent: String, builder: StringBuilder = java.lang.StringBuilder()) {
 
             if (route is DefaultDocument) {
-                builder.appendLine("$indent${route::class.simpleName}: ${route.route.path}")
+                builder.appendLine("$indent${route::class.simpleName}: ${route.target.path}")
             } else {
                 builder.appendLine("$indent${route::class.simpleName}: ${route.path}")
             }

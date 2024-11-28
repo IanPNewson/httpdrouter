@@ -16,9 +16,8 @@ class WebApp(
     constructor(routes :Route, diContext: DIContext = DIContext()) :
             this(Router(routes), diContext)
 
-    override fun serve(_session: IHTTPSession?): Response {
-
-        val session = _session ?: return internalError("No session provided")
+    override fun serve(session: IHTTPSession?): Response {
+        if (session == null) return internalError("No session provided")
 
         try {
             val routePath = router.findRoute(session.uri) ?: return notFound("No route found for ${session.uri}")
@@ -45,7 +44,14 @@ class WebApp(
             val route = routePath.route
             val routeHandler = route.getRouteHandler(diContext)
 
-            val response = routeHandler.getResponse(session)
+            var response = routeHandler.getResponse(session)
+            // Collect and apply all post-processors from the route tree
+            var postProcessors = routePath.path.flatMap { it.route.collectPostProcessors() }
+            postProcessors += router.rootRoute.collectPostProcessors()
+            for (postProcessor in postProcessors) {
+                response = postProcessor.process(response, session)
+            }
+
             return response
         } catch (ex: Exception) {
             return internalError(ex)

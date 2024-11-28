@@ -2,8 +2,13 @@ package org.iannewson.httpdrouter.routes
 
 import org.iannewson.httpdrouter.dependencyinjection.DIContext
 import org.iannewson.httpdrouter.routes.authentication.Authenticator
+import org.iannewson.httpdrouter.routes.postprocessing.ResponsePostProcessor
 
-class Directory(path: String, authenticationHandler: Authenticator? = null, children: MutableList<Route> = mutableListOf()) :
+class Directory(
+    path: String,
+    authenticationHandler: Authenticator? = null,
+    children: MutableList<Route> = mutableListOf()
+) :
     Route(path, children, authenticationHandler) {
 
     constructor(path: String, authenticationHandler: Authenticator? = null, vararg children: Route) : this(
@@ -25,9 +30,9 @@ class Directory(path: String, authenticationHandler: Authenticator? = null, chil
     )
 
     companion object {
-        fun root(authHandler : Authenticator? = null): Directory = Directory("", authHandler)
+        fun root(authHandler: Authenticator? = null): Directory = Directory("", authHandler)
 
-        fun root(vararg children: Route, authHandler : Authenticator? = null) : Directory {
+        fun root(vararg children: Route, authHandler: Authenticator? = null): Directory {
             return root(authHandler).addChildren(*children)
         }
     }
@@ -40,4 +45,11 @@ class Directory(path: String, authenticationHandler: Authenticator? = null, chil
     override fun addChildren(vararg child: Route): Directory {
         return super.addChildren(*child) as Directory
     }
+
+    override fun collectPostProcessors(): List<ResponsePostProcessor> {
+        return super.collectPostProcessors() +
+                this.children.filter { it.path.isEmpty() }
+                    .flatMap { it.collectPostProcessors() }
+    }
+
 }

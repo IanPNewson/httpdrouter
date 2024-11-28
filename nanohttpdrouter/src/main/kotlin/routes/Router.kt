@@ -8,25 +8,32 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 
-class Router(private val rootRoute: Route, val defaultAuthFailedHandler: AuthenticationFailedHandler? = null) {
+class Router(val rootRoute: Route, val defaultAuthFailedHandler: AuthenticationFailedHandler? = null) {
 
     fun findRoute(path: String?): RoutePath? {
         if (path.isNullOrEmpty()) return null
 
         val pathParts = path.trim('/').split('/')
-        return findRouteRecursively(rootRoute, rootRoute.children, pathParts, mutableListOf())
+        return findRouteRecursively(rootRoute, rootRoute.children, pathParts)
     }
 
     private fun findRouteRecursively(
         rootRoute: Route,
         routes: List<Route>,
         pathParts: List<String>,
-        currentPath: MutableList<RoutePathStep>
+        currentPath: MutableList<RoutePathStep> = mutableListOf<RoutePathStep>()
     ): RoutePath? {
         if (pathParts.isEmpty()) return null
 
+//        if (currentPath.isEmpty())
+//            currentPath.add(RoutePathStep(rootRoute,0))
+
         val currentPart = pathParts.first()
-        val matchedRoute = routes.firstOrNull { it.path == currentPart } ?: return null
+        val matchedRoute = routes.firstOrNull { it.path == currentPart }
+
+        if (matchedRoute == null) {
+            return null
+        }
 
         val index = routes.indexOf(matchedRoute)
         currentPath.add(RoutePathStep(matchedRoute, index))
