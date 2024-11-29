@@ -2,6 +2,7 @@ import org.iannewson.httpdrouter.WebApp
 import org.iannewson.httpdrouter.routes.Directory
 import org.iannewson.httpdrouter.routes.Router
 import org.iannewson.httpdrouter.routes.addDefaultDocuments
+import org.iannewson.httpdrouter.routes.postprocessing.RelativeUrlAdjusterPostProcessor
 
 fun main() {
     val hieloRoutes =
