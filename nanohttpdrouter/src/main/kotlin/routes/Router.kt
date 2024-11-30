@@ -10,6 +10,10 @@ import java.util.zip.ZipFile
 
 class Router(val rootRoute: Route, val defaultAuthFailedHandler: AuthenticationFailedHandler? = null) {
 
+    init {
+        rootRoute.validateRouteTree()
+    }
+
     fun findRoute(path: String?): RoutePath? {
         if (path.isNullOrEmpty()) return null
 

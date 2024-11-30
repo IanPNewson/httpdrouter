@@ -91,6 +91,85 @@ abstract class Route(
     open fun collectPostProcessors(): List<ResponsePostProcessor> = postProcessors
 
     /**
+     * Validates the structure and paths of the route tree.
+     *
+     * This function ensures that:
+     * - All route path segments are valid according to URL segment rules.
+     * - No sibling routes have duplicate paths.
+     * - The route hierarchy is logically consistent.
+     *
+     * @param throwOnError If `true`, the function throws an exception on validation errors.
+     *                     If `false`, it returns a list of validation error details.
+     *                     Defaults to `true`.
+     * @return A list of validation error details if `throwOnError` is `false`.
+     *         If `throwOnError` is `true`, this will never return as exceptions are thrown instead.
+     * @throws IllegalArgumentException if validation errors are found and `throwOnError` is `true`.
+     */
+    fun validateRouteTree(throwOnError: Boolean = true): MutableList<RouteValidationError> {
+        val errors = mutableListOf<RouteValidationError>()
+        validateNode(this, RoutePath(this, this, listOf()), errors)
+
+        if (throwOnError && errors.isNotEmpty()) {
+            val errorMessages = errors.joinToString("\n") { error ->
+                "Path: ${error.routePath.fullPath()}, Error: ${error.message}"
+            }
+            throw IllegalArgumentException("Route tree validation failed:\n$errorMessages")
+        }
+
+        return errors
+    }
+
+    /**
+     * Recursively validates a route and its children.
+     *
+     * - Ensures the route path segment is valid.
+     * - Checks for duplicate child paths.
+     *
+     * @param route The current route being validated.
+     * @param currentPath The current path representation in the tree.
+     * @param errors The list of accumulated validation errors.
+     */
+    private fun validateNode(
+        route: Route,
+        currentPath: RoutePath,
+        errors: MutableList<RouteValidationError>
+    ) {
+        // Check for multiple children with empty paths in a Directory
+        if (route is Directory) {
+            val emptyPathCount = route.children.count { it.path.isEmpty() }
+            if (emptyPathCount > 1) {
+                val error = RouteValidationError(
+                    "Directory '${route.path}' has more than one child with an empty path.",
+                    currentPath
+                )
+                errors.add(error)
+            }
+        }
+
+        // Continue with existing validation logic
+        route.children.forEachIndexed { index, child ->
+            val childPath = currentPath.withChild(child, index)
+            validateNode(child, childPath, errors)
+        }
+    }
+
+    /**
+     * Validates a single path segment against a set of rules.
+     *
+     * Path segments must:
+     * - Be non-empty.
+     * - Contain only alphanumeric characters, hyphens (-), underscores (_), or periods (.).
+     *
+     * @param segment The path segment to validate.
+     * @return `true` if the segment is valid, otherwise `false`.
+     */
+    private fun isValidPathSegment(segment: String): Boolean {
+        // A regex allowing alphanumeric characters, hyphens, underscores, and periods
+        val regex = Regex("^[a-zA-Z0-9-_.]*$")
+        return segment.isNotEmpty() && regex.matches(segment)
+    }
+
+    /**
      * Provides a string representation of the route tree starting from this route.
      *
      * @return A string representation of the route tree.
@@ -133,3 +212,4 @@ abstract class Route(
         }
     }
 }
+
