@@ -25,7 +25,7 @@ class Router(val rootRoute: Route, val defaultAuthFailedHandler: AuthenticationF
         rootRoute: Route,
         routes: List<Route>,
         pathParts: List<String>,
-        currentPath: MutableList<RoutePathStep> = mutableListOf<RoutePathStep>()
+        currentPath: MutableList<RoutePathStep> = mutableListOf()
     ): RoutePath? {
         if (pathParts.isEmpty()) return null
 
@@ -33,11 +33,7 @@ class Router(val rootRoute: Route, val defaultAuthFailedHandler: AuthenticationF
 //            currentPath.add(RoutePathStep(rootRoute,0))
 
         val currentPart = pathParts.first()
-        val matchedRoute = routes.firstOrNull { it.path == currentPart }
-
-        if (matchedRoute == null) {
-            return null
-        }
+        val matchedRoute = routes.firstOrNull { it.path == currentPart } ?: return null
 
         val index = routes.indexOf(matchedRoute)
         currentPath.add(RoutePathStep(matchedRoute, index))
@@ -88,7 +84,7 @@ class Router(val rootRoute: Route, val defaultAuthFailedHandler: AuthenticationF
 
             fun buildRoutesFromPath(currentPath: Path, parentPath: Path = rootPath): Route {
                 val relativePath = parentPath.relativize(currentPath).toString().replace("\\", "/")
-                val routePath = if (relativePath.isEmpty()) "" else relativePath
+                val routePath = relativePath.ifEmpty { "" }
 
                 return if (Files.isDirectory(currentPath)) {
                     val children = Files.list(currentPath)
