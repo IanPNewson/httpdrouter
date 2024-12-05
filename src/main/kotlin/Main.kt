@@ -38,7 +38,7 @@ fun main() {
         add<Route> { -> routes }
         add { -> Router(routes, defaultAuthFailedHandler = RedirectAuthenticationFailedHandler("/login")) }
         add { routes :Route -> Router(routes)}
-        add { router: Router, diContext: DIContext -> WebApp(router, diContext) }
+        add { router: Router, diContext: DIContext -> WebApp(router, diContext = diContext) }
         add { -> this }
         add<Nothing1> { -> object : Nothing1 {} }
     }

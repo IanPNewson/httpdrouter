@@ -10,8 +10,8 @@ import org.iannewson.httpdrouter.routes.authentication.AuthenticationFailedExcep
 
 open class WebApp(
     val router: Router,
-    val diContext: DIContext = createDefaultDIContext(),
-    val port: Int = PORT_DEFAULT
+    port: Int = PORT_DEFAULT,
+    val diContext: DIContext = createDefaultDIContext()
 ) : NanoHTTPD(port) {
 
     companion object {
@@ -22,9 +22,9 @@ open class WebApp(
 
     constructor(
         routes: Route,
-        diContext: DIContext = createDefaultDIContext(),
-        port: Int = PORT_DEFAULT
-    ) : this(Router(routes), diContext, port)
+        port: Int = PORT_DEFAULT,
+        diContext: DIContext = createDefaultDIContext()
+    ) : this(Router(routes), port, diContext)
 
     override fun serve(session: IHTTPSession?): Response {
         if (session == null) return internalError("No session provided")

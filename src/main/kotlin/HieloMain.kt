@@ -18,7 +18,7 @@ fun main() {
 //        }
 //    })
 
-    val app = WebApp(routes)
+    val app = WebApp(routes, 1024)
 
     Thread {
         app.start()
