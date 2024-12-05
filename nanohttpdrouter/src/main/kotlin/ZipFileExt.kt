@@ -22,7 +22,7 @@ fun ZipFile.buildZipTree(): TreeNode {
 
     val entries = this.entries().toList() // Convert entries to a list
     for (entry in entries) {
-        val parts = entry.name.split("/")
+        val parts = entry.name.split("/", "\\")
         var currentNode = root
 
         for ((index, part) in parts.withIndex()) {
