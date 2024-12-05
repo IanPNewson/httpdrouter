@@ -38,15 +38,43 @@ object MimeTypes {
         "pptx" to "application/vnd.openxmlformats-officedocument.presentationml.presentation"
     )
 
-    //region static mimes
+//region static mimes
 
     val html = fileExtensionToMimeType["html"]!!
-
     val css = fileExtensionToMimeType["css"]!!
-
     val png = fileExtensionToMimeType["png"]!!
+    val jpg = fileExtensionToMimeType["jpg"]!!
+    val jpeg = fileExtensionToMimeType["jpeg"]!!
+    val gif = fileExtensionToMimeType["gif"]!!
+    val svg = fileExtensionToMimeType["svg"]!!
+    val ico = fileExtensionToMimeType["ico"]!!
+    val bmp = fileExtensionToMimeType["bmp"]!!
+    val webp = fileExtensionToMimeType["webp"]!!
+    val js = fileExtensionToMimeType["js"]!!
+    val json = fileExtensionToMimeType["json"]!!
+    val xml = fileExtensionToMimeType["xml"]!!
+    val txt = fileExtensionToMimeType["txt"]!!
+    val mp3 = fileExtensionToMimeType["mp3"]!!
+    val wav = fileExtensionToMimeType["wav"]!!
+    val ogg = fileExtensionToMimeType["ogg"]!!
+    val mp4 = fileExtensionToMimeType["mp4"]!!
+    val webm = fileExtensionToMimeType["webm"]!!
+    val avi = fileExtensionToMimeType["avi"]!!
+    val pdf = fileExtensionToMimeType["pdf"]!!
+    val zip = fileExtensionToMimeType["zip"]!!
+    val rar = fileExtensionToMimeType["rar"]!!
+    val sevenZ = fileExtensionToMimeType["7z"]!!
+    val tar = fileExtensionToMimeType["tar"]!!
+    val gz = fileExtensionToMimeType["gz"]!!
+    val doc = fileExtensionToMimeType["doc"]!!
+    val docx = fileExtensionToMimeType["docx"]!!
+    val xls = fileExtensionToMimeType["xls"]!!
+    val xlsx = fileExtensionToMimeType["xlsx"]!!
+    val ppt = fileExtensionToMimeType["ppt"]!!
+    val pptx = fileExtensionToMimeType["pptx"]!!
 
-    //endregion
+//endregion
+
 
     fun getMimeType(extension: String): String? {
         return fileExtensionToMimeType[extension]
