@@ -22,11 +22,16 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.named<Jar>("jar") {
+    from(sourceSets.main.get().output)
+    archiveBaseName.set("nanohttprouter") // Set the desired JAR name
+    archiveVersion.set("0.9") // Set the version
 }
 
 tasks.withType<KotlinCompile> {

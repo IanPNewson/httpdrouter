@@ -8,13 +8,23 @@ import org.iannewson.httpdrouter.routes.Route
 import org.iannewson.httpdrouter.routes.Router
 import org.iannewson.httpdrouter.routes.authentication.AuthenticationFailedException
 
-class WebApp(
+open class WebApp(
     val router: Router,
-    val diContext: DIContext = DIContext()
-) : NanoHTTPD(81) {
+    val diContext: DIContext = createDefaultDIContext(),
+    val port: Int = PORT_DEFAULT
+) : NanoHTTPD(port) {
 
-    constructor(routes :Route, diContext: DIContext = DIContext()) :
-            this(Router(routes), diContext)
+    companion object {
+        const val PORT_DEFAULT = 80
+
+        fun createDefaultDIContext() = DIContext()
+    }
+
+    constructor(
+        routes: Route,
+        diContext: DIContext = createDefaultDIContext(),
+        port: Int = PORT_DEFAULT
+    ) : this(Router(routes), diContext, port)
 
     override fun serve(session: IHTTPSession?): Response {
         if (session == null) return internalError("No session provided")
@@ -23,21 +33,23 @@ class WebApp(
             val routePath = router.findRoute(session.uri) ?: return notFound("No route found for ${session.uri}")
 
             val authHandlers =
-                routePath.path.map { it.route.authenticationHandler }
-                    .filterNotNull()
+                routePath.path.mapNotNull { it.route.authenticationHandler }
                     .reversed()
 
             for (authenticationHandler in authHandlers) {
                 if (!authenticationHandler.isAuthenticated(session)) {
-                    val authFailHandler = authenticationHandler.authenticationFailedHandler ?: router.defaultAuthFailedHandler
+                    val authFailHandler =
+                        authenticationHandler.authenticationFailedHandler ?: router.defaultAuthFailedHandler
                     val authFailureResponse = authFailHandler?.response(
                         session,
                         routePath.route,
                         authenticationHandler
                     )
 
-                    return authFailureResponse ?:
-                        throw AuthenticationFailedException(routePath.route, authenticationHandler)
+                    return authFailureResponse ?: throw AuthenticationFailedException(
+                        routePath.route,
+                        authenticationHandler
+                    )
                 }
             }
 

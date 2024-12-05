@@ -38,7 +38,15 @@ object MimeTypes {
         "pptx" to "application/vnd.openxmlformats-officedocument.presentationml.presentation"
     )
 
-    val html = fileExtensionToMimeType["html"]
+    //region static mimes
+
+    val html = fileExtensionToMimeType["html"]!!
+
+    val css = fileExtensionToMimeType["css"]!!
+
+    val png = fileExtensionToMimeType["png"]!!
+
+    //endregion
 
     fun getMimeType(extension: String): String? {
         return fileExtensionToMimeType[extension]
