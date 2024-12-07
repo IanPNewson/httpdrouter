@@ -4,6 +4,7 @@ import org.iannewson.httpdrouter.MimeTypes
 import org.iannewson.httpdrouter.dependencyinjection.DIContext
 import org.iannewson.httpdrouter.extension
 import org.iannewson.httpdrouter.routes.authentication.Authenticator
+import org.iannewson.httpdrouter.routes.builder.RouteBuilder
 import org.iannewson.httpdrouter.routes.postprocessing.ResponsePostProcessor
 
 /**
