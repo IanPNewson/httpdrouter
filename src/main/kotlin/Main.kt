@@ -6,6 +6,8 @@ import org.iannewson.httpdrouter.responses.gson
 import org.iannewson.httpdrouter.responses.text
 import org.iannewson.httpdrouter.routes.*
 import org.iannewson.httpdrouter.routes.authentication.RedirectAuthenticationFailedHandler
+import java.awt.Desktop
+import java.net.URI
 import java.util.zip.ZipFile
 
 fun main() {
@@ -38,7 +40,7 @@ fun main() {
         add<Route> { -> routes }
         add { -> Router(routes, defaultAuthFailedHandler = RedirectAuthenticationFailedHandler("/login")) }
         add { routes :Route -> Router(routes)}
-        add { router: Router, diContext: DIContext -> WebApp(router, diContext = diContext) }
+        add { router: Router, diContext: DIContext -> WebApp(router, diContext = diContext, port = 81) }
         add { -> this }
         add<Nothing1> { -> object : Nothing1 {} }
     }
@@ -50,6 +52,10 @@ fun main() {
     Thread {
         app.start()
     }.start()
+
+    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+        Desktop.getDesktop().browse(URI("http://localhost:${app.port}"));
+    }
 
     println("Running")
     System.console().readLine()

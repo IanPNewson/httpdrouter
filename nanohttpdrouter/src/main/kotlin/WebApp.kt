@@ -10,7 +10,7 @@ import org.iannewson.httpdrouter.routes.authentication.AuthenticationFailedExcep
 
 open class WebApp(
     val router: Router,
-    port: Int = PORT_DEFAULT,
+    val port: Int = PORT_DEFAULT,
     val diContext: DIContext = createDefaultDIContext()
 ) : NanoHTTPD(port) {
 
